@@ -1,32 +1,211 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layout/layout}"
       layout:fragment="Content">
-<section class="py-5">
-    <div class="container px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">Fancy Product</h5>
-                            <!-- Product price-->
-                            $40.00 - $80.00
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
-                    </div>
+
+<style>
+  .hovereffect {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    cursor: default;
+  }
+
+  .hovereffect .overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    overflow: hidden;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    width: 30%;
+    height: 30%;
+    left: 35%;
+    top: 35%;
+    border-radius: 80%;
+    border: 2px solid #FFF;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: translate3d(50%,50%,0);
+    transform: translate3d(50%,50%,0);
+  }
+
+  .hovereffect:hover .overlay {
+    background-color: rgba(0,0,0,0.3);
+  }
+
+  .hovereffect img {
+    display: block;
+    position: relative;
+    -webkit-transition: all 0.35s;
+    transition: all 0.35s;
+  }
+
+  .hovereffect:hover img {
+    filter: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="filter"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="linear" slope="1.4" /><feFuncG type="linear" slope="1.4" /><feFuncB type="linear" slope="1.4" /></feComponentTransfer></filter></svg>#filter');
+    filter: brightness(1.4);
+    -webkit-filter: brightness(1.4);
+  }
+
+  .hovereffect h2 {
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    font-size: 17px;
+    padding: 10px;
+    background-color: transparent;
+    color: #FFF;
+    padding: 1em 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: translate3d(-150%,-400%,0);
+    transform: translate3d(-150%,-400%,0);
+  }
+
+  .hovereffect a, .hovereffect p {
+    color: #FFF;
+    padding: 1em 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: translate3d(-150%,-400%,0);
+    transform: translate3d(-150%,-400%,0);
+  }
+
+  .hovereffect:hover a, .hovereffect:hover p, .hovereffect:hover h2, .hovereffect:hover .overlay {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+  }
+
+  main {
+    padding-top: 100px;
+  }
+
+  .wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+  }
+
+  ul {
+      list-style: none;
+      padding: 0;
+  }
+
+  .info-li + .info-li {
+      margin-top: 1rem;
+  }
+
+  .info-li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.1rem;
+      border-radius: 1rem;
+      border: 1px solid #810541;
+      width: calc(100% - 2rem);
+      box-shadow: 0.25rem 0.25rem 0.75rem rgb(0 0 0 / 0.1);
+  }
+
+  .info-li::before {
+      content: url("/assets/img/cherry/cherry-svgrepo-com-sm.svg");
+  }
+
+  .info-li:nth-child(even) {
+      flex-direction: row-reverse;
+      border: 1px solid #810541;
+      margin-right: -2rem;
+      margin-left: 2rem;
+  }
+
+  .info-li:nth-child(even)::before {
+      transform: rotateY(180deg);
+  }
+</style>
+<body>
+<main>
+  <!-- ======= Hero Section ======= -->
+  <section id="introduce" class="introduce pt-100">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header pb-0">
+        <h2><strong>킹체리는 <br> 1% 고객을 위한 과일입니다.</strong></h2>
+      </div>
+      <div class="row gy-4">
+        <div class="col-lg-12">
+          <section id="stats-counter" class="stats-counter justify-content-center">
+            <div class="container" data-aos="fade-up">
+              <div class="row gy-4 justify-content-center align-items-center">
+                <div class="col-lg-4 col-12">
+                  <div class="stats-item d-flex align-items-center">
+                    <span data-purecounter-start="0" data-purecounter-end="1" data-purecounter-duration="1" class="purecounter"></span>
+                    <p><strong>당일 수학</strong>과 <strong>꼼꼼한 선별</strong>을 통해 배송하므로 신선합니다.</p>
+                  </div><!-- End Stats Item -->
+
+                  <div class="stats-item d-flex align-items-center">
+                    <span data-purecounter-start="0" data-purecounter-end="2" data-purecounter-duration="1" class="purecounter"></span>
+                    <p><string>8-12g 중량</string>과 <strong>평균 19Brix 이상의 당도</strong>를 자랑합나디.</p>
+                  </div><!-- End Stats Item -->
+
+                  <div class="stats-item d-flex align-items-center">
+                    <span data-purecounter-start="0" data-purecounter-end="3" data-purecounter-duration="1" class="purecounter"></span>
+                    <p>과육이 단단하여 <strong>식감이 아삭</strong>합니다.</p>
+                  </div><!-- End Stats Item -->
                 </div>
+                <div class="col-lg-3 col-6 hovereffect">
+                  <img src="assets/img/cherry/cherry11.jpeg" class="img-fluid rounded float-start" alt="...">
+                  <div class="overlay">
+                    <a class="info" href="#">체리 구경하기</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="container" data-aos="fade-up" style="padding-top: 50px">
+              <div class="row gy-4 justify-content-center">
+
+              </div>
+            </div>
+          </section><!-- End Stats Counter Section -->
+        </div>
+      </div>
+    </div>
+    <div class="container" data-aos="fade-up" style="padding-top: 20px">
+      <div class="section-header mt-5">
+        <h2><strong>체리의 10가지 효능</strong></h2>
+      </div>
+      <div class="row gy-4 justify-content-center">
+        <div class="col-lg-3 justify-content-center"></div>
+        <div class="col-lg-3 col-12 justify-content-center">
+            <div class="wrapper">
+                <ul>
+                  <li class="info-li justify-content-center">시력 향상 및 소화 촉진</li>
+                  <li class="info-li justify-content-center">암 예방 및 불면증 치료</li>
+                  <li class="info-li justify-content-center">간 기능 강화 및 다이어트</li>
+                  <li class="info-li justify-content-center">항산화 작용</li>
+                  <li class="info-li justify-content-center">골다공증 예방</li>
+                </ul>
             </div>
         </div>
+        <div class="col-lg-3 col-12 justify-content-center">
+          <div class="wrapper">
+            <ul>
+              <li class="info-li justify-content-center">식욕 증진 및 변비 예방</li>
+              <li class="info-li justify-content-center">당뇨 예방</li>
+              <li class="info-li justify-content-center">빈혈 개선</li>
+              <li class="info-li justify-content-center">심혈관 질환 예방</li>
+              <li class="info-li justify-content-center">소염 효과</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-3 justify-content-center"></div>
+      </div>
     </div>
-</section>
-</html>
+  </section>
+</main><!-- End #main -->
