@@ -12,26 +12,80 @@
     <a href="/" class="logo d-flex align-items-center">
       <!-- Uncomment the line below if you also wish to use an image logo -->
       <!-- <img src="assets/img/logo.png" alt=""> -->
-      <h1 style="font-family: 'Do Hyeon', sans-serif"><img src="assets/img/cherry/cherry-svgrepo-com.svg"/><span>킹</span>체리</h1>
+      <h1 style="font-family: 'jua', sans-serif"><img th:src="@{/assets/img/cherry/cherry-svgrepo-com.svg}"/><span>킹</span>체리</h1>
     </a>
     <nav id="navbar" class="navbar">
       <ul>
-        <li><a href="#introduce">소개</a></li>
-        <li><a href="#product">상품</a></li>
-        <li><a href="#notice">공지사항</a></li>
-        <li><a href="#review">리뷰</a></li>
+        <li id="intro"><a href="#introduce">소개</a></li>
+        <li id="product"><a href="#product">상품</a></li>
+        <li id="notice"><a href="#notice">공지사항</a></li>
+        <li id="review"><a href="#review">리뷰</a></li>
         <li></li>
         <li></li>
-        <li><a href="#"><i class="fas fa-sign-in-alt"></i><span style="margin-left: 5px">로그인</span></a></li>
+        <li id="login"><a href="#"><i class="fas fa-sign-in-alt"></i>
+          <span style="margin-left: 5px" class="login-modal">로그인</span>
+        </a></li>
         <!--<li><a href="https://www.instagram.com/kk_ing_cherry/?next=%2F">인스타그램<i class="bi bi-instagram d-flex ms-4"></i></a></li>-->
       </ul>
     </nav>
+
     <!-- .navbar -->
-
-
+    <div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
     <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
 
   </div>
 </header>
+<script th:inline="javascript">
+  function active() {
+    const path = window.location.pathname
+    console.log(path)
+
+    $('#intro').removeClass("active");
+    $('#product').removeClass("active");
+    $('#notice').removeClass("active");
+    $('#review').removeClass("active");
+
+    if(path.startsWith("/product")) {
+      $('#product').addClass("active");
+    } else if(path.startsWith("/notice")) {
+      $('#notice').addClass("active");
+    } else if(path.startsWith("/review")) {
+      $('#review').addClass("active");
+    } else {
+      $('#intro').addClass("active");
+    }
+  }
+
+  $('#intro').on('click', ()=> {
+    location.href="/"
+  })
+
+  $('#product').on('click', ()=> {
+    location.href="/product/list"
+  })
+
+  $('.login-modal').on('click', () => {
+      console.log("123")
+      $('#login-modal').modal();
+  })
+</script>

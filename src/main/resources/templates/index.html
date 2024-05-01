@@ -4,7 +4,6 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layout/layout}"
       layout:fragment="Content">
-
 <style>
   .hovereffect {
     float: left;
@@ -86,10 +85,6 @@
     transform: translate3d(0,0,0);
   }
 
-  main {
-    padding-top: 100px;
-  }
-
   .wrapper {
       max-width: 600px;
       margin: 0 auto;
@@ -120,87 +115,99 @@
   }
 
   .info-li:nth-child(even) {
-      flex-direction: row-reverse;
       border: 1px solid #810541;
-      margin-right: -2rem;
-      margin-left: 2rem;
   }
 
   .info-li:nth-child(even)::before {
       transform: rotateY(180deg);
   }
+
+  main {
+    background-image: url("/assets/img/cherry/cherry14.jpeg");
+    background-size: cover;
+    position: relative;
+    isolation: isolate;
+  }
+
+  main::after {
+    content: '';
+    position: absolute;
+    background: white;
+    z-index: -1;
+    inset: 0;
+    opacity: 0.73;
+  }
 </style>
-<body>
 <main>
   <!-- ======= Hero Section ======= -->
   <section id="introduce" class="introduce pt-100">
     <div class="container" data-aos="fade-up">
       <div class="section-header pb-0">
-        <h2><strong>킹체리는 <br> 1% 고객을 위한 과일입니다.</strong></h2>
+        <h2 class="header-text"><strong>킹체리는 <br> 1% 고객을 위한 과일입니다.</strong></h2>
       </div>
       <div class="row gy-4">
         <div class="col-lg-12">
           <section id="stats-counter" class="stats-counter justify-content-center">
             <div class="container" data-aos="fade-up">
               <div class="row gy-4 justify-content-center align-items-center">
-                <div class="col-lg-4 col-12">
+                <div class="col-lg-8 col-12">
                   <div class="stats-item d-flex align-items-center">
                     <span data-purecounter-start="0" data-purecounter-end="1" data-purecounter-duration="1" class="purecounter"></span>
-                    <p><strong>당일 수학</strong>과 <strong>꼼꼼한 선별</strong>을 통해 배송하므로 신선합니다.</p>
+                    <p class="inner-text"><strong>당일 수학</strong>과 <strong>꼼꼼한 선별</strong>을 통해 배송하므로 신선합니다.</p>
                   </div><!-- End Stats Item -->
 
                   <div class="stats-item d-flex align-items-center">
                     <span data-purecounter-start="0" data-purecounter-end="2" data-purecounter-duration="1" class="purecounter"></span>
-                    <p><string>8-12g 중량</string>과 <strong>평균 19Brix 이상의 당도</strong>를 자랑합나디.</p>
+                    <p class="inner-text"><string>8-12g 중량</string>과 <strong>평균 19Brix 이상의 당도</strong>를 자랑합나디.</p>
                   </div><!-- End Stats Item -->
 
                   <div class="stats-item d-flex align-items-center">
                     <span data-purecounter-start="0" data-purecounter-end="3" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>과육이 단단하여 <strong>식감이 아삭</strong>합니다.</p>
+                    <p class="inner-text">과육이 단단하여 <strong>식감이 아삭</strong>합니다.</p>
                   </div><!-- End Stats Item -->
                 </div>
+              </div>
+              <!--<div class="row gy-4 justify-content-center align-items-center">
                 <div class="col-lg-3 col-6 hovereffect">
-                  <img src="assets/img/cherry/cherry11.jpeg" class="img-fluid rounded float-start" alt="...">
+                  <img src="assets/img/cherry/cherry13.jpeg" class="img-fluid rounded float-start" alt="...">
                   <div class="overlay">
                     <a class="info" href="#">체리 구경하기</a>
                   </div>
-                </div>
+                </div>-->
               </div>
-            </div>
             <div class="container" data-aos="fade-up" style="padding-top: 50px">
               <div class="row gy-4 justify-content-center">
-
               </div>
             </div>
           </section><!-- End Stats Counter Section -->
         </div>
       </div>
     </div>
-    <div class="container" data-aos="fade-up" style="padding-top: 20px">
+    <div class="container" data-aos="fade-up" style="padding-bottom: 60px">
       <div class="section-header mt-5">
-        <h2><strong>체리의 10가지 효능</strong></h2>
+        <h2 class="header-text"><strong>체리의 10가지 효능</strong></h2>
       </div>
       <div class="row gy-4 justify-content-center">
         <div class="col-lg-3 justify-content-center"></div>
         <div class="col-lg-3 col-12 justify-content-center">
             <div class="wrapper">
                 <ul>
-                  <li class="info-li justify-content-center">시력 향상 및 소화 촉진</li>
-                  <li class="info-li justify-content-center">암 예방 및 불면증 치료</li>
-                  <li class="info-li justify-content-center">간 기능 강화 및 다이어트</li>
-                  <li class="info-li justify-content-center">항산화 작용</li>
-                  <li class="info-li justify-content-center">골다공증 예방</li>
+                  <li class="info-li justify-content-center inner-text">시력 향상 및 소화 촉진</li>
+                  <li class="info-li justify-content-center inner-text">암 예방 및 불면증 치료</li>
+                  <li class="info-li justify-content-center inner-text">간 기능 강화 및 다이어트</li>
+                  <li class="info-li justify-content-center inner-text">항산화 작용</li>
+                  <li class="info-li justify-content-center inner-text">골다공증 예방</li>
                 </ul>
             </div>
         </div>
         <div class="col-lg-3 col-12 justify-content-center">
           <div class="wrapper">
             <ul>
-              <li class="info-li justify-content-center">식욕 증진 및 변비 예방</li>
-              <li class="info-li justify-content-center">당뇨 예방</li>
-              <li class="info-li justify-content-center">빈혈 개선</li>
-              <li class="info-li justify-content-center">심혈관 질환 예방</li>
-              <li class="info-li justify-content-center">소염 효과</li>
+              <li class="info-li justify-content-center inner-text">식욕 증진 및 변비 예방</li>
+              <li class="info-li justify-content-center inner-text">당뇨 예방</li>
+              <li class="info-li justify-content-center inner-text">빈혈 개선</li>
+              <li class="info-li justify-content-center inner-text">심혈관 질환 예방</li>
+              <li class="info-li justify-content-center inner-text">소염 효과</li>
             </ul>
           </div>
         </div>
@@ -209,3 +216,6 @@
     </div>
   </section>
 </main><!-- End #main -->
+<script th:inline="javascript">
+  $(document).on('load', active);
+</script>

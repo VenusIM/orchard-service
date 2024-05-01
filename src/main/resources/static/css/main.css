@@ -11,18 +11,39 @@
 # Learn more about CSS variables at https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
 --------------------------------------------------------------*/
 /* Fonts */
+@font-face {
+  font-family: 'jua';
+  src: url('../assets/font/Jua-Regular.ttf') format('truetype');
+}
+
+main {
+  padding-top: 70px;
+}
+
+.header-text {
+  font-size: 40px !important;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  color: white;
+}
+
+.inner-text {
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  color: white;
+  font-size: 20px !important;
+}
+
 :root {
   /*--font-default: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";*/
-  --font-default: "Do Hyeon", sans-serif;
-  --font-primary: "Montserrat", sans-serif;
-  --font-secondary: "Poppins", sans-serif;
+  --font-default: "jua", sans-serif;
+  --font-primary: "jua", sans-serif;
+  --font-secondary: "jua", sans-serif;
 }
 
 /* Colors */
 :root {
   --color-default: #222222;
   /*--color-primary: #008374;*/
---color-primary: #810541;
+  --color-primary: #810541;
   --color-secondary: #f85a40;
 }
 

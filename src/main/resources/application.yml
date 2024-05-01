@@ -9,10 +9,34 @@ spring:
       enabled: true
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: create
+    properties:
+        hibernate:
+          format_sql: true
   thymeleaf:
     cache: false
     check-template-location: true
     enabled: true
-
   datasource:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:10001/orchard-db
+    username: 'yim3370'
+    password: '@jhlim0205'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  ssh:
+    remote_jump_host: 223.130.153.98
+    ssh_port: 22
+    user: jhlim
+    private_key: /Users/imjunhui/Desktop/jhlim-bastion.pem
+    database_port: 10001
+
+jwt:
+  header: Authorization
+  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+  accessToken-validity-in-seconds: 86400
+  refreshToken-validity-in-seconds: 86400
+
+logging:
+  level:
+    org.hibernate.SQL: debug

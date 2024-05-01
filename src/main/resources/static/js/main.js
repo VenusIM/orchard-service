@@ -46,21 +46,24 @@ document.addEventListener('DOMContentLoaded', () => {
   let navbarlinks = document.querySelectorAll('#navbar a');
 
   function navbarlinksActive() {
-    navbarlinks.forEach(navbarlink => {
-
-      if (!navbarlink.hash) return;
-
-      let section = document.querySelector(navbarlink.hash);
-      if (!section) return;
-
-      let position = window.scrollY + 200;
-
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        navbarlink.classList.add('active');
+    const path = window.location.pathname;
+    let index;
+    if(path.startsWith("/product")){
+      index = 1;
+    } else if (path.startsWith("/notice")){
+      index = 2;
+    } else if (path.startsWith("/review")){
+      index = 3;
+    } else {
+      index = 0;
+    }
+      for(let i = 0; i< navbarlinks.length; i++) {
+      if(i === index) {
+        navbarlinks[i].classList.add('active');
       } else {
-        navbarlink.classList.remove('active');
+        navbarlinks[i].classList.remove('active');
       }
-    })
+    }
   }
   window.addEventListener('load', navbarlinksActive);
   document.addEventListener('scroll', navbarlinksActive);
