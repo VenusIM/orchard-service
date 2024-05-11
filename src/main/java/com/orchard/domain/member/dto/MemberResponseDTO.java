@@ -26,23 +26,22 @@ public class MemberResponseDTO {
     @JsonProperty("name")
     private UserName name;
 
-    @JsonProperty("nickname")
-    private UserNickName nickName;
-
     @JsonProperty("birth")
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd-MM-yyyy")
+            pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
-    @JsonProperty("profile")
-    private UserPhoneNumber profileImage;
+    @JsonProperty("phoneNumber")
+    private UserPhoneNumber phoneNumber;
+
+    @JsonProperty("address")
+    private UserAddress address;
 
     /**
      *  생성 로직
      */
     public static MemberResponseDTO create(final Member member) {
-        return new MemberResponseDTO(member.getEmail(), member.getName(),
-                member.getNickname(), member.getBirth(), null);
+        return new MemberResponseDTO(member.getEmail(), member.getName(), member.getBirth(), member.getPhoneNumber(), member.getAddress());
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.orchard.domain.member.domain.persist.Member;
-import com.orchard.domain.member.domain.persist.MemberQueryRepository;
 import com.orchard.domain.member.domain.persist.MemberRepository;
 import com.orchard.domain.member.domain.vo.UserEmail;
 import com.orchard.domain.member.domain.vo.UserName;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 public class MemberManagementService {
 
     private final MemberRepository memberRepository;
-    private final MemberQueryRepository memberQueryRepository;
     private final PasswordEncoder encoder;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder managerBuilder;
@@ -77,9 +75,7 @@ public class MemberManagementService {
     public MemberResponseDTO findOne(final UserEmail email) {
         log.debug("userEmail : {}", email.userEmail());
 
-        Member findMember = memberRepository.findByEmail(email).orElseThrow(() -> {
-            throw new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
-        });
+        Member findMember = memberRepository.findByEmail(email).orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         return MemberResponseDTO.create(findMember);
     }
@@ -90,6 +86,7 @@ public class MemberManagementService {
         Member member = memberRepository.findByEmail(email).orElseThrow(() ->
             new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
+        log.info(member.toString());
         return memberRepository.findAll(pageable).stream()
                 .map(FindAllResponse::of)
                 .collect(Collectors.toList());

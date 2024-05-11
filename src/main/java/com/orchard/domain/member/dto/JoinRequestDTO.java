@@ -25,7 +25,7 @@ public class JoinRequestDTO {
 
     @Valid
     @JsonProperty("email")
-    @ApiModelProperty(example = "ssar@gmail.com")
+    @ApiModelProperty(example = "yim3370@gmail.com")
     private UserEmail userEmail;
 
     @Valid
@@ -35,39 +35,38 @@ public class JoinRequestDTO {
 
     @Valid
     @JsonProperty("name")
-    @ApiModelProperty(example = "김딱구")
+    @ApiModelProperty(example = "임준희")
     private UserName name;
-
-    @Valid
-    @JsonProperty("nickname")
-    @ApiModelProperty(example = "ssar")
-    private UserNickName nickName;
 
     @JsonProperty("birth")
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
-            pattern = "dd-MM-yyyy")
-    @ApiModelProperty(example = "10-10-1999")
+            pattern = "yyyy-MM-dd")
+    @ApiModelProperty(example = "1999-10-10")
     private LocalDate birth;
 
-    @Valid
-    @JsonProperty("profile")
-    @ApiModelProperty(example = "/user/image/my_image.jpg")
-    private UserPhoneNumber profileImage;
+    @JsonProperty("phoneNumber")
+    @ApiModelProperty(example = "010-1234-5678")
+    private UserPhoneNumber phoneNumber;
+
+    @JsonProperty("address")
+    @ApiModelProperty(example = "서울시 강남구 대치동")
+    private UserAddress address;
+
 
     private JoinRequestDTO(UserEmail userEmail, UserPassword userPassword, UserName name,
-                           UserNickName nickName, LocalDate birth, UserPhoneNumber profileImage) {
+                           LocalDate birth, UserPhoneNumber phoneNumber, UserAddress address) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.name = name;
-        this.nickName = nickName;
         this.birth = birth;
-        this.profileImage = profileImage;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 
     public static JoinRequestDTO from(final Member member) {
-        return new JoinRequestDTO(member.getEmail(), member.getPassword(), member.getName(), member.getNickname(),
-                member.getBirth(), null);
+        return new JoinRequestDTO(member.getEmail(), member.getPassword(), member.getName(), member.getBirth(),
+                member.getPhoneNumber(), member.getAddress());
     }
 
     public Member toEntity() {
@@ -75,10 +74,10 @@ public class JoinRequestDTO {
                 .email(userEmail)
                 .password(userPassword)
                 .name(name)
-                .nickname(nickName)
                 .roleType(RoleType.USER)
                 .birth(birth)
-
+                .phoneNumber(phoneNumber)
+                .address(address)
                 .build();
     }
 }

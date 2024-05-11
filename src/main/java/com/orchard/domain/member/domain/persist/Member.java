@@ -34,9 +34,6 @@ public class Member extends BaseTimeEntity {
     @Column(name = "role_type", length = 20)
     private RoleType roleType;
 
-    @Embedded
-    private UserNickName nickname;
-
     @DateTimeFormat
     private LocalDate birth;
 
@@ -48,12 +45,11 @@ public class Member extends BaseTimeEntity {
 
     @Builder
     public Member(UserEmail email, UserPassword password, UserName name, RoleType roleType,
-                  UserNickName nickname, LocalDate birth, UserPhoneNumber phoneNumber, UserAddress address) {
+                  LocalDate birth, UserPhoneNumber phoneNumber, UserAddress address) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.roleType = roleType;
-        this.nickname = nickname;
         this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -65,8 +61,8 @@ public class Member extends BaseTimeEntity {
     public Member update(final Member member, final PasswordEncoder encoder) {
         changeEmail(member.email);
         changePassword(member.password);
-        changeNickName(member.nickname);
         changePhoneNumber(member.phoneNumber);
+        changeAddress(member.address);
         encode(encoder);
         return this;
     }
@@ -77,10 +73,6 @@ public class Member extends BaseTimeEntity {
 
     private void changePassword(UserPassword password) {
         this.password = password;
-    }
-
-    private void changeNickName(UserNickName nickname) {
-        this.nickname = nickname;
     }
 
     private void changePhoneNumber(UserPhoneNumber phoneNumber) { this.phoneNumber = phoneNumber; }

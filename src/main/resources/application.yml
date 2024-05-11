@@ -19,17 +19,10 @@ spring:
     check-template-location: true
     enabled: true
   datasource:
-    url: jdbc:mysql://localhost:10001/orchard-db
-    username: 'yim3370'
+    url: jdbc:mysql://localhost:3306/orchard
+    username: 'jhlim'
     password: '@jhlim0205'
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-  ssh:
-    remote_jump_host: 223.130.153.98
-    ssh_port: 22
-    user: jhlim
-    private_key: /Users/imjunhui/Desktop/jhlim-bastion.pem
-    database_port: 10001
 
 jwt:
   header: Authorization

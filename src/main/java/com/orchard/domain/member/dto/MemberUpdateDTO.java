@@ -1,8 +1,10 @@
 package com.orchard.domain.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.orchard.domain.member.domain.vo.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -10,10 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.orchard.domain.member.domain.persist.Member;
-import com.orchard.domain.member.domain.vo.UserEmail;
-import com.orchard.domain.member.domain.vo.UserNickName;
-import com.orchard.domain.member.domain.vo.UserPassword;
-import com.orchard.domain.member.domain.vo.UserPhoneNumber;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
@@ -31,33 +29,31 @@ public class MemberUpdateDTO {
     @ApiModelProperty(example = "3245")
     private UserPassword password;
 
-    @JsonProperty("nickname")
-    @ApiModelProperty(example = "golf")
-    private UserNickName nickName;
+    @JsonProperty("phoneNumber")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private UserPhoneNumber phoneNumber;
 
-    @JsonProperty("profile")
-    @ApiModelProperty(example = "/user/image/new_image.jpeg")
-    private UserPhoneNumber profileImage;
+    @JsonProperty("address")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private UserAddress address;
 
-    private MemberUpdateDTO(UserEmail email, UserPassword password, UserNickName nickName,
-                           UserPhoneNumber profileImage) {
+    private MemberUpdateDTO(UserEmail email, UserPassword password, UserPhoneNumber phoneNumber, UserAddress address) {
         this.email = email;
         this.password = password;
-        this.nickName = nickName;
-        this.profileImage = profileImage;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 
     public static MemberUpdateDTO from(final Member member) {
-        return new MemberUpdateDTO(member.getEmail(), member.getPassword(), member.getNickname(),
-                null);
+        return new MemberUpdateDTO(member.getEmail(), member.getPassword(), member.getPhoneNumber(), member.getAddress());
     }
 
     public Member toEntity() {
         return Member.builder()
                 .email(email)
                 .password(password)
-                .nickname(nickName)
-
+                .phoneNumber(phoneNumber)
+                .address(address)
                 .build();
     }
 }

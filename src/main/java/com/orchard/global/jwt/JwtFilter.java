@@ -1,32 +1,32 @@
 package com.orchard.global.jwt;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
 import com.orchard.global.common.TokenProvider;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter extends OncePerRequestFilter {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final TokenProvider tokenProvider;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        HttpServletRequest servletRequest = (HttpServletRequest) request;
+    protected void doFilterInternal(@NotNull HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws ServletException, IOException {
 
         log.debug("request : {}", servletRequest);
 
@@ -47,7 +47,21 @@ public class JwtFilter extends GenericFilterBean {
             log.info("유효한 JWT 토큰이 없습니다. uri: {}", requestURI);
         }
 
-        chain.doFilter(request, response);
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String[] excludePath = {
+                "/",
+                "/assets/",
+                "/js/",
+                "/css/",
+                "/fontawesome/"
+        };
+
+        return Arrays.stream(excludePath)
+                .anyMatch(request.getRequestURI()::startsWith);
     }
 
     private String resolveToken(HttpServletRequest request) {

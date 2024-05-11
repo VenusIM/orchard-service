@@ -7,10 +7,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,7 +28,7 @@ import com.orchard.global.jwt.JwtSecurityConfig;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -67,8 +66,21 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManagerBuilder.build())
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security",
-                                        "/swagger-ui.html", "/webjars/**","/swagger/**", "/assets/**", "/css/**", "fontawesome/**", "/js/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs",
+                                        "/configuration/ui",
+                                        "/swagger-resources",
+                                        "/configuration/security",
+                                        "/swagger-ui.html",
+                                        "/webjars/**",
+                                        "/swagger/**",
+                                        "/favicon.ico",
+                                        "/assets/**",
+                                        "/css/**",
+                                        "fontawesome/**",
+                                        "/js/**"
+                                ).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/", "/product/list").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/api/v1/members/join").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/members/login").permitAll()
@@ -83,7 +95,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -5,7 +5,6 @@ import com.orchard.domain.member.domain.persist.MemberRepository;
 import com.orchard.domain.member.domain.vo.UserEmail;
 import com.orchard.domain.member.error.exception.MemberNotFoundException;
 import com.orchard.global.error.exception.ErrorCode;
-import com.orchard.global.jwt.error.UnAuthorizationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -35,8 +34,6 @@ public class TokenProvider implements InitializingBean {
     private final String secret;
     private final long accessTokenValidityInMilliseconds;
     private final long refreshTokenValidityInMilliseconds;
-
-//    private final RedisService redisService;
     private final MemberRepository memberRepository;
 
     private Key key;
@@ -50,7 +47,6 @@ public class TokenProvider implements InitializingBean {
         this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds * 1000;
         this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds * 1000;
         this.memberRepository = memberRepository;
-//        this.redisService = redisService;
     }
 
     @Override
@@ -68,13 +64,11 @@ public class TokenProvider implements InitializingBean {
 
         long now = (new Date()).getTime();
 
-        Member member = memberRepository.findByEmail(UserEmail.from(email)).orElseThrow(() -> {
-            throw new MemberNotFoundException(ErrorCode.USER_NOT_FOUND);
-        });
+        Member member = memberRepository.findByEmail(UserEmail.from(email)).orElseThrow(() -> new MemberNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         String accessToken = Jwts.builder()
                 .claim("email", member.getEmail().userEmail())
-                .claim("nickname", member.getNickname().userNickname())
+                .claim("phoneNumber", member.getPhoneNumber().userPhoneNumber())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -83,7 +77,7 @@ public class TokenProvider implements InitializingBean {
         String refreshToken = Jwts.builder()
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("email", member.getEmail().userEmail())
-                .claim("nickname", member.getNickname().userNickname())
+                .claim("nickname", member.getPhoneNumber().userPhoneNumber())
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
@@ -115,11 +109,6 @@ public class TokenProvider implements InitializingBean {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-
-//            if (redisService.getBlackList(token) != null) {
-//                throw new UnAuthorizationException(ErrorCode.UN_AUTHORIZATION_ERROR);
-//            }
-
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
