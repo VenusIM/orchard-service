@@ -68,7 +68,7 @@ public class TokenProvider implements InitializingBean {
 
         String accessToken = Jwts.builder()
                 .claim("email", member.getEmail().userEmail())
-                .claim("phoneNumber", member.getPhoneNumber().userPhoneNumber())
+                .claim("name", member.getName().userName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -77,7 +77,7 @@ public class TokenProvider implements InitializingBean {
         String refreshToken = Jwts.builder()
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("email", member.getEmail().userEmail())
-                .claim("nickname", member.getPhoneNumber().userPhoneNumber())
+                .claim("name", member.getName().userName())
                 .setExpiration(new Date(now + refreshTokenValidityInMilliseconds))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();

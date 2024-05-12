@@ -9,7 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import com.orchard.domain.member.application.MemberManagementService;
 import com.orchard.domain.member.domain.persist.Member;
@@ -29,6 +31,12 @@ import java.util.List;
 public class MemberManagementController {
 
     private final MemberManagementService memberManagementService;
+
+    @GetMapping("/check/{email}")
+    public ResponseEntity<MemberResponseDTO> findByEmail(@PathVariable String email) {
+        MemberResponseDTO member = memberManagementService.findOne(UserEmail.from(email));
+        return ResponseEntity.ok(member);
+    }
 
     @PostMapping("/join")
     @ApiOperation(value = "회원 가입", notes = "회원 정보를 입력받아 저장한다.")
@@ -52,7 +60,7 @@ public class MemberManagementController {
 
     @GetMapping("/findByEmail")
     @ApiOperation(value = "회원 조회", notes = "회원 정보를 보여주는 API")
-    public ResponseEntity<MemberResponseDTO> findByEmail() {
+    public ResponseEntity<MemberResponseDTO> findByEmail(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(memberManagementService.findOne(UserEmail.from(getEmail())));
     }
 
@@ -69,14 +77,6 @@ public class MemberManagementController {
             @PathVariable String name,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(memberManagementService.searchMember(UserName.from(name), pageable));
-    }
-
-
-    // 회원 검색창 -> 자기랑 선호도가 맞는 회원을 갖고와야함 -> 회원 검색
-    @GetMapping
-    public ResponseEntity<List<FindAllResponse>> findAll(
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(memberManagementService.findAll(UserEmail.from(getEmail()), pageable));
     }
 
     private String getEmail() {

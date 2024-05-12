@@ -1,5 +1,7 @@
 package com.orchard.global.jwt;
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -12,22 +14,24 @@ import com.orchard.global.common.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final TokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws ServletException, IOException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
+        ((HttpServletRequest) request).getCookies();
         log.debug("request : {}", servletRequest);
 
         String jwt = resolveToken(servletRequest);
@@ -47,21 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("유효한 JWT 토큰이 없습니다. uri: {}", requestURI);
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String[] excludePath = {
-                "/",
-                "/assets/",
-                "/js/",
-                "/css/",
-                "/fontawesome/"
-        };
-
-        return Arrays.stream(excludePath)
-                .anyMatch(request.getRequestURI()::startsWith);
+        chain.doFilter(servletRequest, response);
     }
 
     private String resolveToken(HttpServletRequest request) {

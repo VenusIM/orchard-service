@@ -20,4 +20,8 @@ public class TokenDTO {
     public static TokenDTO create(final AccessToken accessToken, final RefreshToken refreshToken) {
         return new TokenDTO(accessToken, refreshToken);
     }
+
+    public void setOriginRefreshToken(RefreshToken refreshToken) {
+        this.refreshToken =  refreshToken;
+    }
 }

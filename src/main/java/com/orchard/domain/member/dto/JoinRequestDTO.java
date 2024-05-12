@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.orchard.domain.member.domain.persist.Member;
@@ -16,68 +18,28 @@ import com.orchard.domain.member.domain.vo.*;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @ApiModel
-@JsonTypeName("user")
-@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
 public class JoinRequestDTO {
 
-    @Valid
-    @JsonProperty("email")
-    @ApiModelProperty(example = "yim3370@gmail.com")
-    private UserEmail userEmail;
-
-    @Valid
-    @JsonProperty("password")
-    @ApiModelProperty(example = "1234")
-    private UserPassword userPassword;
-
-    @Valid
-    @JsonProperty("name")
-    @ApiModelProperty(example = "임준희")
-    private UserName name;
-
-    @JsonProperty("birth")
-    @JsonFormat(
-            shape = JsonFormat.Shape.STRING,
-            pattern = "yyyy-MM-dd")
-    @ApiModelProperty(example = "1999-10-10")
-    private LocalDate birth;
-
-    @JsonProperty("phoneNumber")
-    @ApiModelProperty(example = "010-1234-5678")
-    private UserPhoneNumber phoneNumber;
-
-    @JsonProperty("address")
-    @ApiModelProperty(example = "서울시 강남구 대치동")
-    private UserAddress address;
-
-
-    private JoinRequestDTO(UserEmail userEmail, UserPassword userPassword, UserName name,
-                           LocalDate birth, UserPhoneNumber phoneNumber, UserAddress address) {
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
-        this.name = name;
-        this.birth = birth;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-    }
-
-    public static JoinRequestDTO from(final Member member) {
-        return new JoinRequestDTO(member.getEmail(), member.getPassword(), member.getName(), member.getBirth(),
-                member.getPhoneNumber(), member.getAddress());
-    }
+    private String email;
+    private String password;
+    private String name;
+    private String phoneNumber;
+    private String postCode;
+    private String address;
 
     public Member toEntity() {
         return Member.builder()
-                .email(userEmail)
-                .password(userPassword)
-                .name(name)
+                .email(UserEmail.from(email))
+                .password(UserPassword.from(password))
+                .name(UserName.from(name))
                 .roleType(RoleType.USER)
-                .birth(birth)
-                .phoneNumber(phoneNumber)
-                .address(address)
+                .phoneNumber(UserPhoneNumber.from(phoneNumber))
+                .postCode(UserPostCode.from(postCode))
+                .address(UserAddress.from(address))
                 .build();
     }
 }

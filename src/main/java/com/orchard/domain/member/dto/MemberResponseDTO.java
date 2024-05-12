@@ -26,14 +26,11 @@ public class MemberResponseDTO {
     @JsonProperty("name")
     private UserName name;
 
-    @JsonProperty("birth")
-    @JsonFormat(
-            shape = JsonFormat.Shape.STRING,
-            pattern = "yyyy-MM-dd")
-    private LocalDate birth;
-
     @JsonProperty("phoneNumber")
     private UserPhoneNumber phoneNumber;
+
+    @JsonProperty("postCode")
+    private UserPostCode postCode;
 
     @JsonProperty("address")
     private UserAddress address;
@@ -42,6 +39,6 @@ public class MemberResponseDTO {
      *  생성 로직
      */
     public static MemberResponseDTO create(final Member member) {
-        return new MemberResponseDTO(member.getEmail(), member.getName(), member.getBirth(), member.getPhoneNumber(), member.getAddress());
+        return new MemberResponseDTO(member.getEmail(), member.getName(), member.getPhoneNumber(), member.getPostCode(), member.getAddress());
     }
 }

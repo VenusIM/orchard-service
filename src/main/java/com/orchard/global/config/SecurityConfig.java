@@ -81,17 +81,20 @@ public class SecurityConfig {
                                         "fontawesome/**",
                                         "/js/**"
                                 ).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/", "/product/list").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/v1/members/join").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/member/register").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/member/register").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/members/check/*").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/", "/product/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/member/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/members/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/members/reissue").permitAll()
                                 .requestMatchers("/swagger-resources/**").permitAll()
                                 .anyRequest()
                                 .authenticated()
                 ).sessionManagement(
                         httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).apply(new JwtSecurityConfig(tokenProvider));
+                )
+                .apply(new JwtSecurityConfig(tokenProvider));
 
         return http.build();
     }

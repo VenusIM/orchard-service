@@ -90,7 +90,7 @@
                                                 </div>
                                             </div>
                                             <!-- Product actions-->
-                                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                            <div id="cherry1" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">상세보기</a></div>
                                             </div>
                                         </div>
@@ -121,7 +121,7 @@
                                                 </div>
                                             </div>
                                             <!-- Product actions-->
-                                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                            <div id="cherry2" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">상세보</a></div>
                                             </div>
                                         </div>
@@ -143,6 +143,17 @@
 </main><!-- End #main -->
 
 <script th:inline="javascript">
-    $(document).on('load', () => {
+    $('#cherry1').on('click', () => {
+        $.get({
+            url: "/product/detail"
+        }).done((data) => {
+            $('main').html(data);
+
+        })
     })
+
+    $('#cherry2').on('click', () => {
+
+    })
+
 </script>

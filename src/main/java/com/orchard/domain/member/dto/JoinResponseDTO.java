@@ -24,12 +24,6 @@ public class JoinResponseDTO {
     @JsonProperty("name")
     private UserName name;
 
-    @JsonProperty("birth")
-    @JsonFormat(
-            shape = JsonFormat.Shape.STRING,
-            pattern = "yyyy-MM-dd")
-    private LocalDate birth;
-
     @JsonProperty("phoneNumber")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private UserPhoneNumber phoneNumber;
@@ -39,7 +33,7 @@ public class JoinResponseDTO {
     private UserAddress address;
 
     public static JoinResponseDTO from(final Member member) {
-        return new JoinResponseDTO(member.getEmail(), member.getName(), member.getBirth(),
+        return new JoinResponseDTO(member.getEmail(), member.getName(),
                 member.getPhoneNumber(), member.getAddress());
     }
 }

@@ -1,5 +1,6 @@
 package com.orchard.domain.auth.api;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,22 +19,22 @@ public class AuthController {
     private final MemberAuthService memberAuthService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<TokenDTO> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse httpServletResponse) {
         return new ResponseEntity<>(
                 memberAuthService.authorize(requestDto.getEmail(), requestDto.getPassword()), HttpStatus.OK);
     }
 
-    @PostMapping("/reissue")
+    /*@PostMapping("/reissue")
     public ResponseEntity<TokenDTO> reissue(@Valid @RequestBody TokenDTO requestToken) {
         TokenDTO tokenDTO =
-                memberAuthService.reissue(requestToken.getAccessToken(), requestToken.getRefreshToken());
+                memberAuthService.reissue(requestToken.getRefreshToken());
 
         return ResponseEntity.ok(tokenDTO);
-    }
+    }*/
 
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(@Valid @RequestBody TokenDTO tokenDTO) {
-        memberAuthService.logout(tokenDTO.getRefreshToken(), tokenDTO.getAccessToken());
+        memberAuthService.logout(tokenDTO.getAccessToken());
         return ResponseEntity.ok().build();
     }
 }

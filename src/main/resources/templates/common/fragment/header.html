@@ -1,10 +1,160 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      th:fragment="HeaderFragment">
+      th:fragment="HeaderFragment"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>KingCherry</title>
+  <style>
+    body{
+      margin:0;
+      color:#6a6f8c;
+      background:#c8c8c8;
+      font:600 16px/18px 'jua',sans-serif;
+    }
+    *,:after,:before{box-sizing:border-box}
+    .clearfix:after,.clearfix:before{content:'';display:table}
+    .clearfix:after{clear:both;display:block}
+    a{color:inherit;text-decoration:none}
+
+    .login-wrap{
+      width:100%;
+      margin:auto;
+      max-width:525px;
+      min-height:670px;
+      position:relative;
+    }
+    .login-html{
+      width:100%;
+      height:100%;
+      position:absolute;
+      padding:90px 70px 50px 70px;
+    }
+    .login-html .sign-in-htm,
+    .login-html .sign-up-htm{
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      position:absolute;
+      transform:rotateY(180deg);
+      backface-visibility:hidden;
+      transition:all .4s linear;
+    }
+    .login-html .sign-in,
+    .login-html .sign-up,
+    .login-form .group .check{
+      display:none;
+    }
+    .login-html .tab,
+    .login-form .group .label,
+    .login-form .group .button{
+      text-transform:uppercase;
+    }
+    .login-html .tab{
+      font-size:22px;
+      margin-right:15px;
+      padding-bottom:5px;
+      margin:0 15px 10px 0;
+      display:inline-block;
+      border-bottom:2px solid transparent;
+    }
+    .login-html .sign-in:checked + .tab,
+    .login-html .sign-up:checked + .tab{
+      color:#f85a40;
+      border-color:#1161ee;
+    }
+    .login-form{
+      min-height:345px;
+      position:relative;
+      perspective:1000px;
+      transform-style:preserve-3d;
+      margin-top:40px;
+    }
+    .login-form .group{
+      margin-bottom:15px;
+    }
+    .login-form .group .label,
+    .login-form .group .input,
+    .login-form .group .button{
+      width:100%;
+      display:block;
+    }
+    .login-form .group .input,
+    .login-form .group .button{
+      padding:15px 20px;
+      border-radius:25px;
+      border: 1px solid #f85a40
+    }
+    .login-form .group input[data-type="password"]{
+      text-security:circle;
+      -webkit-text-security:circle;
+    }
+    .login-form .group .label{
+      color:#aaa;
+      font-size:12px;
+    }
+
+    .login-form .group .button{
+      background:#f85a40;
+      color: #fff
+    }
+    .login-form .group label .icon{
+      width:15px;
+      height:15px;
+      border-radius:2px;
+      position:relative;
+      display:inline-block;
+      border: 1px solid black;
+    }
+    .login-form .group label .icon:before,
+    .login-form .group label .icon:after{
+      content:'';
+      width:10px;
+      height:2px;
+      background:#fff;
+      position:absolute;
+      transition:all .2s ease-in-out 0s;
+    }
+    .login-form .group label .icon:before{
+      left:3px;
+      width:5px;
+      bottom:6px;
+      transform:scale(0) rotate(0);
+    }
+    .login-form .group label .icon:after{
+      top:6px;
+      right:0;
+      transform:scale(0) rotate(0);
+    }
+    .login-form .group .check:checked + label{
+      color:#f85a40;
+    }
+    .login-form .group .check:checked + label .icon{
+      background:#1161ee;
+    }
+    .login-form .group .check:checked + label .icon:before{
+      transform:scale(1) rotate(45deg);
+    }
+    .login-form .group .check:checked + label .icon:after{
+      transform:scale(1) rotate(-45deg);
+    }
+    .login-html .sign-in:checked + .tab + .sign-up + .tab + .login-form .sign-in-htm{
+      transform:rotate(0);
+    }
+    .login-html .sign-up:checked + .tab + .login-form .sign-up-htm{
+      transform:rotate(0);
+    }
+
+    .hr{
+      height:2px;
+      margin:60px 0 50px 0;
+    }
+    .foot-lnk{
+      text-align:center;
+    }
+  </style>
 </head>
 <!-- Navigation-->
 <header id="header" class="header d-flex align-items-center">
@@ -22,40 +172,117 @@
         <li id="review"><a href="#review">리뷰</a></li>
         <li></li>
         <li></li>
-        <li id="login"><a href="#"><i class="fas fa-sign-in-alt"></i>
-          <span style="margin-left: 5px" class="login-modal">로그인</span>
-        </a></li>
+        <li id="login">
+          <a href="#" id="inner-profile" class="justify-content-start">
+          </a>
+        </li>
         <!--<li><a href="https://www.instagram.com/kk_ing_cherry/?next=%2F">인스타그램<i class="bi bi-instagram d-flex ms-4"></i></a></li>-->
       </ul>
     </nav>
 
-    <!-- .navbar -->
-    <div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-      <div class="modal-dialog" role="document">
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+  </div>
+</header>
+
+<ul class="nav">
+  <li>
+    <div class="modal fade" id="loginModal" role="dialog">
+      <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
           <div class="modal-body">
-            ...
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+              <div class="login-wrap">
+                <div class="modal-header">
+                  <button id="modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                </div>
+                <div class="login-html">
+                  <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">회원</label>
+                  <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">비회원</label>
+                  <div class="login-form">
+                    <div class="sign-in-htm">
+                      <form id="login-data" class="align-items-center">
+                        <div class="group">
+                          <label for="user" class="label">이메일</label>
+                          <input id="email" type="text" class="input">
+                        </div>
+                        <div class="group">
+                          <label for="password" class="label">비밀번호</label>
+                          <input id="password" type="password" class="input" data-type="password">
+                        </div>
+                        <div class="group">
+                          <input id="check" type="checkbox" class="check" checked>
+                          <label for="check"><span class="icon"></span> 아이디 기억하기</label>
+                        </div>
+                        <div class="group">
+                          <input id="login-btn" type="button" class="button" value="로그인">
+                        </div>
+                        <div id="error" class="group" hidden="hidden"><span style="color:red">이메일, 비밀번호를 확인해 주세요.</span></div>
+                      </form>
+                      <div class="hr"></div>
+                      <div class="foot-lnk">
+                        <span id="register">회원 가입</span> / <span id="findAccount">계정 찾기</span>
+                      </div>
+                    </div>
+                    <form id="-data" class="align-items-center">
+                      <div class="sign-up-htm">
+                        <div class="group">
+                          <label for="user" class="label">주문번호</label>
+                          <input id="user" type="text" class="input">
+                        </div>
+                        <div class="group">
+                          <label for="pass" class="label">전화번호</label>
+                          <input id="pass" type="password" class="input" data-type="password">
+                        </div>
+                        <div class="group">
+                          <input type="submit" class="button" value="주문조회">
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
     </div>
+  </li>
+</ul>
 
-    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-
-  </div>
-</header>
 <script th:inline="javascript">
+
+  function isEmpty(value){
+    return value === "" || value === null || value === undefined || (typeof value === "object" && !Object.keys(value).length);
+  }
+
+  let accessToken;
+  let refreshToken;
+
+  function getCookie(name) {
+    const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value? value[2] : null;
+  }
+
+  $(document).ready(function () {
+    accessToken = getCookie('accessToken');
+    /*document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';*/
+    if(!isEmpty(accessToken)) {
+        $.get({
+          url: "/api/v1/members/findByEmail",
+          headers:{'Authorization': "Bearer "+accessToken}
+        }).done((data) => {
+          $('#inner-profile').html(data.user.name);
+          const mobileNavShow = document.querySelector('.mobile-nav-show');
+          const mobileNavHide = document.querySelector('.mobile-nav-hide');
+          document.querySelector('body').classList.toggle('mobile-nav-active');
+          mobileNavShow.classList.toggle('d-none');
+          mobileNavHide.classList.toggle('d-none');
+        })
+    } else {
+      $('#inner-profile').html(`<i class="fas fa-sign-in-alt"></i><span style="margin-left: 5px" class="login-modal">로그인</span>`)
+    }
+  })
+
+
   function active() {
     const path = window.location.pathname
     console.log(path)
@@ -84,8 +311,71 @@
     location.href="/product/list"
   })
 
-  $('.login-modal').on('click', () => {
-      console.log("123")
-      $('#login-modal').modal();
+  $(document).on('click', '.login-modal',() => {
+      $('#loginModal').modal('show')
+  })
+
+  $('#signUp').on('click', () => {
+    $('#login-container').addClass("right-panel-active");
+  });
+
+  $('#signIn').on('click', () => {
+    $('#login-container').removeClass("right-panel-active");
+  });
+
+  $('#modal-close').on('click', () => {
+    $('form').each(function () {
+      this.reset();
+    })
+    $('#loginModal').modal('hide');
+  })
+
+  $('#register').on('click', () => {
+    location.href = "/member/register"
+  })
+
+  $('#login-btn').on('click', () => {
+    $.post({
+      url: "/api/v1/members/login",
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({
+        "user" : {
+          "email" : $('#email').val(),
+          "password" : $('#password').val()
+        }
+      })
+    }).done((data) => {
+      accessToken = data.accessToken;
+      refreshToken = data.refreshToken;
+
+      const date = new Date();
+      date.setTime(date.getTime() + (60 * 60 * 1000));
+      const expires = "expires=" + date.toGMTString();
+
+      document.cookie = `accessToken=${accessToken};path=/;${expires}`;
+
+      $('form').each(function () {
+        this.reset();
+      })
+      $('#loginModal').modal('hide');
+
+
+      $.get({
+        url: "/api/v1/members/findByEmail",
+        headers:{'Authorization': "Bearer "+accessToken}
+      }).done((data) => {
+        $('#inner-profile').html(data.user.name);
+        const mobileNavShow = document.querySelector('.mobile-nav-show');
+        const mobileNavHide = document.querySelector('.mobile-nav-hide');
+        document.querySelector('body').classList.toggle('mobile-nav-active');
+        mobileNavShow.classList.toggle('d-none');
+        mobileNavHide.classList.toggle('d-none');
+      })
+
+    }).fail((data) => {
+      if(data.status === 500) {
+        $('#error').attr('hidden', false);
+      }
+    })
   })
 </script>

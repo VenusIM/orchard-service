@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<style>
+    .product-image {
+        height: 300px;
+    }
+
+    .ribbon {
+        --f: 10px; /* control the folded part*/
+        --r: 15px; /* control the ribbon shape */
+        --t: 20px; /* the top offset */
+
+        position: absolute;
+        inset: var(--t) calc(-1*var(--f)) auto auto;
+        padding: 5px 20px var(--f) calc(20px + var(--r));
+        clip-path:
+                polygon(0 0,100% 0,100% calc(100% - var(--f)),calc(100% - var(--f)) 100%,
+                calc(100% - var(--f)) calc(100% - var(--f)),0 calc(100% - var(--f)),
+                var(--r) calc(50% - var(--f)/2));
+        background: #f67daa;
+        box-shadow: 0 calc(-1*var(--f)) 0 inset #0005;
+    }
+
+
+    .ribbon-box {
+        position:relative;
+    }
+
+    .percent-sale {
+        color: red !important;
+    }
+
+    .product-title {
+        font-size: 30px;
+    }
+
+    .price {
+        font-size: 20px;
+    }
+
+    .product-header-text {
+        font-size: 40px !important;
+        font-family: jua;
+    }
+
+    .product {
+        padding: 20px 0 !important;
+    }
+
+</style>
+<main>
+    <section style="padding-top: 40px;">
+        <div class="container">
+            <div class="row gy-4 justify-content-center">
+                <div class="col-md-3 justify-content-center align-items-center" style="background-color: white">
+                    <img th:src="@{/assets/img/cherry/cherry2.jpeg}" style="width: 100%; height: 100%">
+                </div>
+                <div class="col-md-9" style="height: 100%">
+                    <div class="card">
+                        <!-- Product image-->
+                        <!-- Product details-->
+                        <div class="card-body p-4" style="height: 100%">
+                            <div>
+                                <!-- Product name-->
+                                <h5 class="fw-bolder product-title">국내산 킹체리 1kg</h5>
+                                <br>
+                                <!-- Product price-->
+                                <div style="display: flex">
+                                    <div style="width: 100px">
+                                        <span class="price">판매가</span>
+                                    </div>
+                                    <div style="margin-left: 10px">
+                                        <div>
+                                            <span class="text-muted text-decoration-line-through">35,000원</span>
+                                        </div>
+                                        <div>
+                                            <strong class="price">28,000원</strong>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="border-radius: 30%; border: 1px solid black; margin-left: 10px">20%</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; margin-top: 10px;">
+                                    <div style="width: 100px">
+                                        <span class="price">배송 정보</span>
+                                    </div>
+                                    <div style="margin-left: 10px">
+                                        <div>
+                                            <span>우채국 택배</span>
+                                        </div>
+                                        <div>
+                                            <span>배송비 </span><span>3,500원</span><span>(70,000원 이상 무료 배송)</span>
+                                        </div>
+                                        <div>
+                                            <span>택배 주문 마감 평일 오후 2시</span>
+                                        </div>
+                                        <div style="display: flex; width: 100px; margin-top: 20px;" class="text-center">
+                                            <div id="minus" style="width: 33%; border: 1px solid black; cursor: pointer">-</div>
+                                            <div id="product-count" style="width: 34%; border: 1px solid black;">1</div>
+                                            <div id="plus" style="width: 33%; border: 1px solid black; cursor: pointer">+</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="float-end" style="margin-top: 10px">
+                                    <div>총 상품 금액 <strong id="price">28,000</strong>원</div>
+                                    <div style="margin-top: 10px">
+                                        <button class="btn btn-info" style="margin-right: 10px">장바구니</button>
+                                        <button id="buy" class="btn btn-success">구매하기</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section style="margin-top: 0">
+        <div class="container">
+            <ul class="nav nav-tabs col-md-12 col-12">
+                <li class="nav-item col-md-3 col-3">
+                    <a class="nav-link active" aria-current="page" href="#">상세설명</a>
+                </li>
+                <li class="nav-item col-md-3 col-3">
+                    <a class="nav-link active" aria-current="page" href="#">상품후기</a>
+                </li>
+                <li class="nav-item col-md-3 col-3">
+                    <a class="nav-link active" aria-current="page" href="#">상품문의</a>
+                </li>
+                <li class="nav-item col-md-3 col-3">
+                    <a class="nav-link active" aria-current="page" href="#">교환/반품/배송</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main><!-- End #main -->
+
+<script src="https://pay.nicepay.co.kr/v1/js/"></script>
+<script th:inline="javascript">
+
+    $('#plus').on('click', () => {
+        const $count = $('#product-count')
+        const count = parseInt($count.text());
+        $count.text(count + 1);
+
+        const price = 39000 * (count+1);
+        const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+        $('#price').text(cn1)
+    })
+
+    $('#minus').on('click', () => {
+        const $count = $('#product-count')
+        const count = parseInt($count.text());
+        if(count === 1) {
+            return;
+        }
+        $count.text(count - 1);
+
+        const price = 39000 * (count-1);
+        const cn1 = price.toString()
+
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+        $('#price').text(cn1)
+    })
+
+    $('#buy').on('click', () => {
+            AUTHNICE.requestPay({
+                clientId: [[${clientId}]],
+                method: 'card',
+                orderId: 1,
+                amount: 1004,
+                goodsName: '나이스페이-상품',
+                returnUrl: 'http://localhost:8080/serverAuth',
+                fnError: function (result) {
+                    alert('개발자확인용 : ' + result.errorMsg + '')
+                }
+            });
+    })
+
+    $('#cherry1').on('click', () => {
+    })
+
+    $('#cherry2').on('click', () => {
+
+    })
+
+</script>

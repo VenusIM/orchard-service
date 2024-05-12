@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8080
 
 spring:
   application:
@@ -10,7 +10,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
         hibernate:
           format_sql: true
@@ -27,8 +27,12 @@ spring:
 jwt:
   header: Authorization
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-  accessToken-validity-in-seconds: 86400
-  refreshToken-validity-in-seconds: 86400
+  accessToken-validity-in-seconds: 3600
+  refreshToken-validity-in-seconds: 1209600
+
+nice:
+  client-id: R2_4177c272c6b746e8aba9d652b6f072b1
+  secret-key: f0d2609ee0da4f99923ace4723142983
 
 logging:
   level:

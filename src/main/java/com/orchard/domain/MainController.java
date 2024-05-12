@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 @Controller
 public class MainController {
+
     @GetMapping("/")
     public String index() {
         return "index";
