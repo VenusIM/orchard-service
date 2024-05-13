@@ -3,7 +3,6 @@ package com.orchard.global.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,11 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import com.orchard.domain.auth.details.CustomMemberDetailService;
 import com.orchard.global.common.TokenProvider;
 import com.orchard.global.jwt.JwtAccessDeniedHandler;
@@ -35,7 +32,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final CorsFilter corsFilter;
+//    private final CorsFilter corsFilter;
     private final CustomMemberDetailService customMemberDetailService;
 
     @Bean
@@ -57,7 +54,7 @@ public class SecurityConfig {
         http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(
                         httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -66,30 +63,8 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManagerBuilder.build())
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                                .requestMatchers(HttpMethod.GET,
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs",
-                                        "/configuration/ui",
-                                        "/swagger-resources",
-                                        "/configuration/security",
-                                        "/swagger-ui.html",
-                                        "/webjars/**",
-                                        "/swagger/**",
-                                        "/favicon.ico",
-                                        "/assets/**",
-                                        "/css/**",
-                                        "fontawesome/**",
-                                        "/js/**"
-                                ).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/member/register").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/member/register").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/members/check/*").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/", "/product/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/member/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/v1/members/login").permitAll()
-                                .requestMatchers("/swagger-resources/**").permitAll()
                                 .anyRequest()
-                                .authenticated()
+                                .permitAll()
                 ).sessionManagement(
                         httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -102,7 +77,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

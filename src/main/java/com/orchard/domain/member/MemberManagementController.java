@@ -9,9 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import com.orchard.domain.member.application.MemberManagementService;
 import com.orchard.domain.member.domain.persist.Member;
@@ -26,7 +24,7 @@ import java.util.List;
 
 @RestController
 @Api("회원 관리 API")
-@RequestMapping("/api/v1/members")
+@RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
 public class MemberManagementController {
 
@@ -60,7 +58,7 @@ public class MemberManagementController {
 
     @GetMapping("/findByEmail")
     @ApiOperation(value = "회원 조회", notes = "회원 정보를 보여주는 API")
-    public ResponseEntity<MemberResponseDTO> findByEmail(@AuthenticationPrincipal User user) {
+    public ResponseEntity<MemberResponseDTO> findByEmail() {
         return ResponseEntity.ok(memberManagementService.findOne(UserEmail.from(getEmail())));
     }
 
