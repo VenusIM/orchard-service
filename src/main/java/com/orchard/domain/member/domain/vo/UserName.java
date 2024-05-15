@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class UserName {
 
     @NotBlank(message = "이름은 필수 입력사항 입니다.")
-    @Column(unique = true, nullable = false, length = 20)
+    @Column(nullable = false, length = 20)
     private String name;
 
     public static UserName from(final String name) {

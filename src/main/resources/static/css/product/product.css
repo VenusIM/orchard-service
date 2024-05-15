@@ -1,0 +1,53 @@
+.product-image {
+    height: 300px;
+}
+
+.ribbon {
+    --f: 10px; /* control the folded part*/
+    --r: 15px; /* control the ribbon shape */
+    --t: 20px; /* the top offset */
+
+    position: absolute;
+    inset: var(--t) calc(-1*var(--f)) auto auto;
+    padding: 5px 20px var(--f) calc(20px + var(--r));
+    clip-path:
+            polygon(0 0,100% 0,100% calc(100% - var(--f)),calc(100% - var(--f)) 100%,
+            calc(100% - var(--f)) calc(100% - var(--f)),0 calc(100% - var(--f)),
+            var(--r) calc(50% - var(--f)/2));
+    background: #f67daa;
+    box-shadow: 0 calc(-1*var(--f)) 0 inset #0005;
+}
+
+
+.ribbon-box {
+    position:relative;
+}
+
+.percent-sale {
+    color: red !important;
+}
+
+.product-title {
+    font-size: 30px;
+}
+
+.price {
+    font-size: 20px;
+}
+
+.product-header-text {
+    font-size: 40px !important;
+    font-family: jua;
+}
+
+.product {
+    padding: 20px 0 !important;
+}
+
+.product-title {
+    font-size: 30px;
+}
+
+.price {
+    font-size: 20px;
+}

@@ -1,16 +1,16 @@
 package com.orchard.domain.member.domain.persist;
 
+import com.orchard.domain.cart.domain.persist.Cart;
+import com.orchard.domain.order.domain.persist.Order;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.orchard.domain.member.domain.vo.*;
 import com.orchard.global.common.BaseTimeEntity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -42,6 +42,10 @@ public class Member extends BaseTimeEntity {
 
     @Embedded
     private UserPhoneNumber phoneNumber;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     @Builder
     public Member(UserEmail email, UserPassword password, UserName name, RoleType roleType,

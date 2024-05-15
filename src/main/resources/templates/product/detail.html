@@ -1,60 +1,16 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
-<style>
-    .product-image {
-        height: 300px;
-    }
-
-    .ribbon {
-        --f: 10px; /* control the folded part*/
-        --r: 15px; /* control the ribbon shape */
-        --t: 20px; /* the top offset */
-
-        position: absolute;
-        inset: var(--t) calc(-1*var(--f)) auto auto;
-        padding: 5px 20px var(--f) calc(20px + var(--r));
-        clip-path:
-                polygon(0 0,100% 0,100% calc(100% - var(--f)),calc(100% - var(--f)) 100%,
-                calc(100% - var(--f)) calc(100% - var(--f)),0 calc(100% - var(--f)),
-                var(--r) calc(50% - var(--f)/2));
-        background: #f67daa;
-        box-shadow: 0 calc(-1*var(--f)) 0 inset #0005;
-    }
-
-
-    .ribbon-box {
-        position:relative;
-    }
-
-    .percent-sale {
-        color: red !important;
-    }
-
-    .product-title {
-        font-size: 30px;
-    }
-
-    .price {
-        font-size: 20px;
-    }
-
-    .product-header-text {
-        font-size: 40px !important;
-        font-family: jua;
-    }
-
-    .product {
-        padding: 20px 0 !important;
-    }
-
-</style>
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/layout}"
+      layout:fragment="Content">
+<link th:inline="css" th:href="@{/css/product/product.css}" rel="stylesheet"/>
 <main>
     <section style="padding-top: 40px;">
         <div class="container">
             <div class="row gy-4 justify-content-center">
-                <div class="col-md-3 justify-content-center align-items-center" style="background-color: white">
-                    <img th:src="@{/assets/img/cherry/cherry2.jpeg}" style="width: 100%; height: 100%">
+                <div class="col-md-3 justify-content-center align-items-center" style="background-color: white; max-height: 325px; padding: 0; border-radius: 5px">
+                    <img th:src="@{/assets/img/cherry/cherry14.jpeg}" style="width: 100%; height: 100%; border-radius: 5px">
                 </div>
                 <div class="col-md-9" style="height: 100%">
                     <div class="card">
@@ -63,7 +19,7 @@
                         <div class="card-body p-4" style="height: 100%">
                             <div>
                                 <!-- Product name-->
-                                <h5 class="fw-bolder product-title">국내산 킹체리 1kg</h5>
+                                <h5 class="fw-bolder product-title" th:text="${product.name}"></h5>
                                 <br>
                                 <!-- Product price-->
                                 <div style="display: flex">
@@ -72,14 +28,14 @@
                                     </div>
                                     <div style="margin-left: 10px">
                                         <div>
-                                            <span class="text-muted text-decoration-line-through">35,000원</span>
+                                            <span th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}" class="text-muted text-decoration-line-through"></span>
                                         </div>
                                         <div>
-                                            <strong class="price">28,000원</strong>
+                                            <strong class="price" th:text="${#numbers.formatInteger(product.price/100 * (100 - product.sale), 3, 'COMMA') + '원'}"></strong>
                                         </div>
                                     </div>
                                     <div>
-                                        <div style="border-radius: 30%; border: 1px solid black; margin-left: 10px">20%</div>
+                                        <div style="border-radius: 30%; border: 1px solid black; margin-left: 10px" th:text="${product.sale + '%'}"></div>
                                     </div>
                                 </div>
                                 <div style="display: flex; margin-top: 10px;">
@@ -104,9 +60,9 @@
                                     </div>
                                 </div>
                                 <div class="float-end" style="margin-top: 10px">
-                                    <div>총 상품 금액 <strong id="price">28,000</strong>원</div>
+                                    <div>총 상품 금액 <strong id="price" th:text="${#numbers.formatInteger(product.price/100 * (100 - product.sale), 3, 'COMMA')}"></strong>원</div>
                                     <div style="margin-top: 10px">
-                                        <button class="btn btn-info" style="margin-right: 10px">장바구니</button>
+                                        <button id="cart" class="btn btn-info" style="margin-right: 10px">장바구니</button>
                                         <button id="buy" class="btn btn-success">구매하기</button>
                                     </div>
                                 </div>
@@ -120,32 +76,84 @@
     <section style="margin-top: 0">
         <div class="container">
             <ul class="nav nav-tabs col-md-12 col-12">
-                <li class="nav-item col-md-3 col-3">
+                <li class="nav-item col-md-6 col-6">
                     <a class="nav-link active" aria-current="page" href="#">상세설명</a>
                 </li>
-                <li class="nav-item col-md-3 col-3">
+                <li class="nav-item col-md-6 col-6">
                     <a class="nav-link active" aria-current="page" href="#">상품후기</a>
                 </li>
-                <li class="nav-item col-md-3 col-3">
+                <!--<li class="nav-item col-md-3 col-3">
                     <a class="nav-link active" aria-current="page" href="#">상품문의</a>
+                    <div>준비중3</div>
                 </li>
                 <li class="nav-item col-md-3 col-3">
                     <a class="nav-link active" aria-current="page" href="#">교환/반품/배송</a>
-                </li>
+                    <div>준비중3</div>
+                </li>-->
             </ul>
         </div>
     </section>
+
+    <div class="modal fade" id="anno-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">비회원 구매</h5>
+                        <button id="anno-modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">×
+                        </button>
+                    </div>
+                    <div style="padding:50px">
+                        <form id="order-data" class="align-items-center">
+                            <div class="group wd-50">
+                                <label for="anno-user" class="label">주문자명</label>
+                                <input id="anno-user" type="text" class="form-control" maxlength="10">
+                            </div>
+                            <div id="phone-group" class="mb-3" style="margin-top: 10px">
+                                <label for="phone">휴대폰 번호</label>
+                                <div style="display: flex">
+                                    <div class="">
+                                        <input type="text" id="phone" name="phoneNumber" class="form-control"
+                                               value="" style="text-align:center;" maxlength="13"
+                                               placeholder="000-0000-0000"
+                                               pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required/>
+                                    </div>
+                                    <button id="authBtn" type="button" class="btn btn-sm"
+                                            style="border: 1px solid gray; margin-left: 5px">전송
+                                    </button>
+                                </div>
+                                <div style="display:flex;">
+                                    <input type="text" id="typingcode" class="form-control w-25" name="typingcode"
+                                           value="" hidden="hidden" required>
+                                    <span id="time_count"></span>
+                                </div>
+                                <span id="phone-validate" style="color: red"></span>
+                            </div>
+                            <div class="group float-end">
+                                <button id="anno-buy" class="btn btn-success">구매하기</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main><!-- End #main -->
 
 <script src="https://pay.nicepay.co.kr/v1/js/"></script>
 <script th:inline="javascript">
+
+    const pojo = parseInt([[${product.price}]]) / 100 * (100 - parseInt([[${product.sale}]]))
 
     $('#plus').on('click', () => {
         const $count = $('#product-count')
         const count = parseInt($count.text());
         $count.text(count + 1);
 
-        const price = 39000 * (count+1);
+        let price = pojo * (count+1);
+        if(price <= 70000) {
+            price += 3500;
+        }
         const cn1 = price.toString()
             .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         $('#price').text(cn1)
@@ -159,32 +167,223 @@
         }
         $count.text(count - 1);
 
-        const price = 39000 * (count-1);
+        let price = pojo * (count-1);
+        if(price <= 70000) {
+            price += 3500;
+        }
         const cn1 = price.toString()
-
             .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
         $('#price').text(cn1)
     })
 
-    $('#buy').on('click', () => {
+    $('#cart').on('click', () => {
+        if(isEmpty(accessToken)) {
+            alert("로그인 후 이용해 주세요.");
+            return;
+        }
+    })
+
+    function order(name, phone) {
+        const json = {
+            "productId" : [[${product.id}]],
+            "price" : [[${product.price}]],
+            "count" : $("#product-count").text()
+        }
+
+        if(!isEmpty(name)) {
+            json["userName"] = name;
+        }
+
+        if(!isEmpty(phone)) {
+            json["phoneNumber"] = phone;
+        }
+
+        $.post({
+            url: "/api/v1/order/id",
+            contentType: 'application/json; charset=utf-8',
+            headers:{'Authorization': "Bearer "+accessToken},
+            data: JSON.stringify(json)
+        }).done((data) => {
             AUTHNICE.requestPay({
-                clientId: [[${clientId}]],
+                clientId: data.clientId,
                 method: 'card',
-                orderId: 1,
-                amount: 1004,
-                goodsName: '나이스페이-상품',
+                orderId: data.orderId,
+                amount: parseInt(data.product.price) * parseInt(data.count),
+                goodsName: [[${product.name}]],
                 returnUrl: 'http://localhost:8080/serverAuth',
                 fnError: function (result) {
                     alert('개발자확인용 : ' + result.errorMsg + '')
                 }
             });
+        })
+    }
+
+    $('#anno-buy').on('click', function(e) {
+        const name = $("#anno-user").val();
+        const phone = $("#phone").val();
+
+        e.preventDefault();
+        const form = $('#validation-form')
+        form.addClass('was-validated');
+
+        const code = $('#typingcode').val();
+        if(isEmpty(code)) {
+            return;
+        }
+        $.post({
+            url: "/api/v1/auth/code",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                "number": phone,
+                "code": code
+            })
+        }).done((e) => {
+            if (e.code !== "200") {
+                alert(e.msg)
+                $('#typingcode').focus();
+                return;
+            }
+            order(name, phone);
+        })
     })
 
-    $('#cherry1').on('click', () => {
+
+
+    $('#buy').on('click', () => {
+
+        if(isEmpty(accessToken)) {
+            $('#anno-modal').modal("show");
+            return;
+        }
+        order("", "");
     })
 
-    $('#cherry2').on('click', () => {
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("phone").addEventListener("keyup", function(event) {
+            inputPhoneNumber(event);
+        });
+    });
 
+    function inputPhoneNumber(event) {
+        const phone = event.target;
+        if( event.keyCode !== 8 ) {
+            const regExp = new RegExp( /^[0-1]{3}-^[0-9]{4}-^[0-9]{4}/g );
+            if( phone.value.replace( regExp, "").length !== 0 ) {
+                if( checkPhoneNumber( phone.value ) === true ) {
+                    let number = phone.value.replace( /[^0-9]/g, "" );
+                    let tel = "";
+                    let seoul = 0;
+                    if( number.substring( 0, 2 ).indexOf( "02" ) === 0 ) {
+                        seoul = 1;
+                        phone.setAttribute("maxlength", "12");
+                        console.log( phone );
+                    } else {
+                        phone.setAttribute("maxlength", "13");
+                    }
+                    if( number.length < ( 4 - seoul) ) {
+                        return number;
+                    } else if( number.length < ( 7 - seoul ) ) {
+                        tel += number.substr( 0, (3 - seoul ) );
+                        tel += "-";
+                        tel += number.substr( 3 - seoul );
+                    } else if(number.length < ( 11 - seoul ) ) {
+                        tel += number.substr( 0, ( 3 - seoul ) );
+                        tel += "-";
+                        tel += number.substr( ( 3 - seoul ), 3 );
+                        tel += "-";
+                        tel += number.substr( 6 - seoul );
+                    } else {
+                        tel += number.substr( 0, ( 3 - seoul ) );
+                        tel += "-";
+                        tel += number.substr( ( 3 - seoul), 4 );
+                        tel += "-";
+                        tel += number.substr( 7 - seoul );
+                    }
+                    phone.value = tel;
+                } else {
+                    const regExp = new RegExp( /[^0-9|^-]*$/ );
+                    phone.value = phone.value.replace(regExp, "");
+                }
+            }
+        }
+    }
+
+    function checkPhoneNumber( number ) {
+        const regExp = new RegExp( /^[0-9|-]*$/ );
+        if( regExp.test( number ) === true ) { return true; }
+        else { return false; }
+    }
+
+    $('#authBtn').on('click', () => {
+
+        const regExp = new RegExp( /[0-1]{3}-[0-9]{4}-[0-9]{4}/g );
+        if( regExp.test( $("#phone").val() ) === false ) {
+            $('#phone-validate').text("번호 형식을 확인해 주세요.")
+            return;
+        }
+        $('#phone-validate').text("")
+
+        $.post({
+            url: "/api/v1/auth/phone",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ "number" : $('#phone').val() })
+        }).done((data) => {
+            if(data.code === "200") {
+                doTimer();
+            } else {
+                alert(data.msg);
+            }
+        })
+    })
+
+    let intervalVar = undefined;
+    let timeSecond = undefined;
+
+    function doTimer() {	// 인증번호 전송 버튼을 클릭!
+        const auth_btn = document.getElementById("authBtn");
+        auth_btn.disabled = true;
+        auth_btn.value = "재전송";	// 인증번호 전송 버튼 text가 '재전송'으로 바뀜.// 인증번호 입력란에 해당 임시코드가 노출된다.
+        timeSecond = 180;	// 타이머 3분
+        document.getElementById('time_count').innerText = getTimeString(timeSecond);	// 타이머 입력창에 시간이 노출된다.
+        document.getElementById("typingcode").hidden = false;
+
+        if (intervalVar != undefined) {
+            clearInterval(intervalVar);
+        }
+
+        intervalVar = setInterval(function () {
+            if (timeSecond != 0) {
+                timeSecond = timeSecond - 1;
+                document.getElementById('time_count').innerText = getTimeString(timeSecond);	// 0초가 아니라면 1초씩 감소 되면서 타이머 입력창에 보여진다.
+            } else {
+                clearInterval(intervalVar);
+                intervalVar = false;	// 그 외 동작은 clearInterval 메소드로 인해 시간이 멈춘다.
+            }
+            if(timeSecond < 120) {
+                auth_btn.disabled = false;
+            }
+
+            if (timeSecond == -1 || intervalVar == false) {
+                document.getElementById('time_count').innerText = ""
+            }
+        }, 1000);	// 180초에서 1000ms초 간격으로 시간이 흐른다.
+    }
+
+    function getTimeString(second) {	// 타이머 계산법
+        let minute = '' + (Math.floor(second / 60));	// 1분
+        let dividedSec = second % 60;	//  60초
+        if (dividedSec < 10) {	// 만약 10보다 작은 1~9초는 앞에 '0'을 붙인다.
+            dividedSec = '0' + dividedSec;
+        }
+        // ex) 3:00 -> 3분
+        return minute + ":" + dividedSec;
+    }
+
+    $('#anno-modal-close').on('click', () => {
+        $('form').each(function () {
+            this.reset();
+        })
+        $('#anno-modal').modal('hide');
     })
 
 </script>

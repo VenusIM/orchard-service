@@ -164,17 +164,27 @@
       <h1 style="font-family: 'jua', sans-serif"><img th:src="@{/assets/img/cherry/cherry-svgrepo-com.svg}"/><span>킹</span>체리</h1>
     </a>
     <nav id="navbar" class="navbar">
-      <ul>
+      <ul id="nav">
         <li id="intro"><a href="#introduce">소개</a></li>
         <li id="product"><a href="#product">상품</a></li>
         <li id="notice"><a href="#notice">공지사항</a></li>
         <li id="review"><a href="#review">리뷰</a></li>
         <li></li>
         <li></li>
-        <li id="login">
+        <li id="anon" hidden="hidden">
           <a href="#" id="inner-profile" class="justify-content-start">
+            <i class="fas fa-sign-in-alt"></i><span style="margin-left: 5px" class="login-modal">로그인</span>
           </a>
         </li>
+        <li id="auth" class="dropdown" hidden="hidden">
+          <a href="#" class=""><span id="userName"></span>
+          <i class="bi dropdown-indicator bi-chevron-down"></i></a>
+          <ul class="">
+<!--            <li id="myPage"><a href="#">마이페이지</a></li>-->
+            <li id="logout"><a href="#">로그아웃</a></li>
+          </ul>
+        </li>
+        <li id="cart"><a href="#cart"><i class="fas fa-shopping-cart"></i></a></li>
         <!--<li><a href="https://www.instagram.com/kk_ing_cherry/?next=%2F">인스타그램<i class="bi bi-instagram d-flex ms-4"></i></a></li>-->
       </ul>
     </nav>
@@ -201,12 +211,12 @@
                     <div class="sign-in-htm">
                       <form id="login-data" class="align-items-center">
                         <div class="group">
-                          <label for="user" class="label">이메일</label>
-                          <input id="email" name="userEmail" type="text" class="input">
+                          <label for="email-login" class="label">이메일</label>
+                          <input id="email-login" name="userEmail" type="text" class="input">
                         </div>
                         <div class="group">
-                          <label for="password" class="label">비밀번호</label>
-                          <input id="password" name="password" type="password" class="input" data-type="password">
+                          <label for="password-login" class="label">비밀번호</label>
+                          <input id="password-login" name="password" type="password" class="input" data-type="password">
                         </div>
                         <div class="group">
                           <input id="check" type="checkbox" class="check" checked>
@@ -249,22 +259,43 @@
 
 <script th:inline="javascript">
 
+  /*function preventRightClick(event) {
+    event.preventDefault();
+  }
+  // 우클릭 이벤트를 감지하여 막음
+  document.addEventListener('contextmenu', preventRightClick);*/
+
   function isEmpty(value){
     return value === "" || value === null || value === undefined || (typeof value === "object" && !Object.keys(value).length);
+  }
+
+  function auth() {
+    $('#auth').attr('hidden', false);
+    $('#anon').attr('hidden', true);
+  }
+
+  function anno() {
+    $('#anon').attr('hidden', false);
+    $('#auth').attr('hidden', true);
   }
 
   let accessToken;
 
   $(document).ready(function () {
+    const kci = window.localStorage.getItem("kci")
+    if(!isEmpty(kci)) {
+      $('#email-login').val(kci);
+    }
+
     if(isEmpty(accessToken)) {
         $.post({
-          url: "/api/v1/member/reissue",
+          url: "/api/v1/auth/reissue",
           // headers:{'Authorization': "Bearer "+accessToken}
         }).done((data) => {
           accessToken = data.accessToken;
           setName();
         }).fail(() => {
-          $('#inner-profile').html(`<i class="fas fa-sign-in-alt"></i><span style="margin-left: 5px" class="login-modal">로그인</span>`)
+          anno();
         })
     } else {
       setName();
@@ -276,12 +307,12 @@
       url: "/api/v1/member/findByEmail",
       headers:{'Authorization': "Bearer "+accessToken}
     }).done((data) => {
-      $('#inner-profile').text(data.user.name);
+      $('#userName').text(data.user.name);
+      auth();
     }).fail(() => {
-      $('#inner-profile').html(`<i class="fas fa-sign-in-alt"></i><span style="margin-left: 5px" class="login-modal">로그인</span>`)
+      anno();
     })
   }
-
 
   function active() {
     const path = window.location.pathname
@@ -330,27 +361,52 @@
     $('#loginModal').modal('hide');
   })
 
+  $("#notice #review").on('click', () => {
+    alert("준비중 입니다.")
+  })
+
   $('#register').on('click', () => {
     location.href = "/member/register"
   })
 
   $('#login-btn').on('click', () => {
     $.post({
-      url: "/api/v1/member/login",
+      url: "/api/v1/auth/login",
       contentType: 'application/json; charset=utf-8',
       xhrFields: { withCredentials: true },
       data: JSON.stringify({
         "user" : {
-          "email" : $('#email').val(),
-          "password" : $('#password').val()
+          "email" : $('#email-login').val(),
+          "password" : $('#password-login').val()
         }
       })
     }).done(() => {
-      window.location.href = "/";
+
+      if($('#check').is(':checked')) {
+        window.localStorage.setItem("kci", $('#email-login').val());
+      } else {
+        window.localStorage.removeItem("kci");
+      }
+      window.location.href = window.location.pathname;
     }).fail((data) => {
       if(data.status === 500) {
         $('#error').attr('hidden', false);
       }
+    })
+  })
+
+  $('#logout').on('click', () => {
+    $.ajax({
+      url: "/api/v1/auth/logout",
+      method: "DELETE",
+      headers:{'Authorization': "Bearer "+accessToken},
+      xhrFields: { withCredentials: true },
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({
+        "accessToken" : accessToken
+      })
+    }).done(() => {
+      window.location.href = "/"
     })
   })
 </script>

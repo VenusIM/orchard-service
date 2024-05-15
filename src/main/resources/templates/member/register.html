@@ -66,7 +66,7 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="name">이름 (최대 10자)</label>
-                        <input type="text" class="form-control w-25" name="name" id="name" placeholder="" value="" required>
+                        <input type="text" class="form-control w-25" name="name" maxlength="10" id="name" placeholder="" value="" required>
                         <div class="invalid-feedback">
                             이름을 입력해주세요.
                         </div>
@@ -75,14 +75,12 @@
 
                 <div class="mb-3">
                     <label for="email">이메일 (ID로 사용 됩니다)</label>
-                    <div style="display: flex">
+                    <div id="email-group" style="display: flex">
                         <input type="email" class="form-control w-50" name="email" id="email" placeholder="you@example.com" required>
                         <div class="invalid-feedback">
                             이메일을 확인해주세요.
                         </div>
-<!--                        <button type="button" class="btn btn-sm" style="border: 1px solid gray; margin-left: 5px;" onclick="">-->
-<!--                            인증-->
-<!--                        </button>-->
+                        <span id="email-validate" style="color: red"></span>
                     </div>
                 </div>
 
@@ -105,11 +103,13 @@
                 <div class="mb-3">
                     <label for="address">주소</label>
                     <div style="display: flex">
-                        <input type="text" id="postcode" placeholder="우편번호" name="postCode" class="form-control w-25" required disabled>
-                        <div class="invalid-feedback">
-                            우편번호를 확인해 주세요.
+                        <div  class="w-25">
+                            <input type="text" id="postcode" placeholder="우편번호" name="postCode" class="form-control" required disabled>
+                            <div class="invalid-feedback">
+                                우편번호를 확인해 주세요.
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-sm" style="border: 1px solid gray; margin-left: 5px" onclick="execDaumPostcode()">
+                        <button id="findPost" type="button" class="btn btn-sm" style="border: 1px solid gray; margin-left: 5px">
                             우편번호 찾기
                         </button>
                     </div>
@@ -126,12 +126,19 @@
                     <input type="hidden" id="full-address" name="address">
                 </div>
 
-                <div class="mb-3">
+                <div id="phone-group" class="mb-3">
                     <label for="phone">휴대폰 번호</label>
-                    <input type="text" id="phone" name="phoneNumber" class="form-control w-25" value="" style="text-align:center;" maxlength="13" placeholder="000-0000-00000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}" required/>
-                    <div class="invalid-feedback">
-                        전화 번호를 확인해 주세요.
+                    <div style="display: flex">
+                        <div class="w-25">
+                            <input type="text" id="phone" name="phoneNumber" class="form-control" value="" style="text-align:center;" maxlength="13" placeholder="000-0000-00000" pattern="[0-1]{3}-[0-9]{4}-[0-9]{4}" required/>
+                        </div>
+                        <button id="authBtn" type="button" class="btn btn-sm" style="border: 1px solid gray; margin-left: 5px">전송</button>
                     </div>
+                    <div style="display:flex;">
+                        <input type="text" id="typingcode" class="form-control w-25" name="typingcode" value="" hidden="hidden" required>
+                        <span id="time_count"></span>
+                    </div>
+                    <span id="phone-validate" style="color: red"></span>
                 </div>
 
                 <hr class="mb-4">
@@ -165,48 +172,72 @@
             if(!form.get(0).checkValidity()) {
                 return;
             }
-
-            const name = $('#name').val();
-            const email = $('#email').val();
-            const phone = $('#phone').val();
-            const postcode = $('#postcode').val();
-            const address = $('#address').val();
-            const detail = $('#detailAddress').val();
-            const password = $('#password').val();
-            if(isEmpty(name) || isEmpty(email) || isEmpty(phone) || isEmpty(postcode) || isEmpty(address)) {
+            const code = $('#typingcode').val();
+            if(isEmpty(code)) {
                 return;
             }
+            $.post({
+                url: "/api/v1/auth/code",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    "number": $("#phone").val(),
+                    "code": code
+                })
+            }).done((e) => {
+                if (e.code !== "200") {
+                    alert(e.msg)
+                    $('#typingcode').focus();
+                    return;
+                }
 
-            if(password !== $('#password-check').val()) {
-                return;
-            }
+                const name = $('#name').val();
+                const email = $('#email').val();
+                const phone = $('#phone').val();
+                const postcode = $('#postcode').val();
+                const address = $('#address').val();
+                const detail = $('#detailAddress').val();
+                const password = $('#password').val();
+                if (isEmpty(name) || isEmpty(email) || isEmpty(phone) || isEmpty(postcode) || isEmpty(address)) {
+                    return;
+                }
 
-            $('#register-name').val(name)
-            $('#register-password').val(password)
-            $('#register-email').val(email)
-            $('#register-phoneNumber').val(phone)
-            $('#register-postcode').val(postcode)
-            if(isEmpty(detail)) {
-                $('#register-address').val(address)
-            }else {
-                $('#register-address').val(address + " " + detail)
-            }
-            $('#register-form').attr('method','post').attr('action','/member/register').submit();
+                if (name.length > 10) {
+                    $('#name').focus()
+                    return;
+                }
+
+                if (password !== $('#password-check').val()) {
+                    return;
+                }
+
+                $('#register-name').val(name)
+                $('#register-password').val(password)
+                $('#register-email').val(email)
+                $('#register-phoneNumber').val(phone)
+                $('#register-postcode').val(postcode)
+                if (isEmpty(detail)) {
+                    $('#register-address').val(address)
+                } else {
+                    $('#register-address').val(address + " " + detail)
+                }
+                $('#register-form').attr('method', 'post').attr('action', '/member/register').submit();
+            })
+
         })
 
-        var element_wrap = document.getElementById('popup-wrap');
-        var address_modal = document.getElementById('modal-address');
-        function execDaumPostcode() {
+        const element_wrap = document.getElementById('popup-wrap');
+        const address_modal = document.getElementById('modal-address');
+        $('#findPost').on('click', () => {
             // 현재 scroll 위치를 저장해놓는다.
-            var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+            const currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
             new daum.Postcode({
                 oncomplete: function(data) {
                     // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                     // 각 주소의 노출 규칙에 따라 주소를 조합한다.
                     // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-                    var addr = ''; // 주소 변수
-                    var extraAddr = ''; // 참고항목 변수
+                    let addr = ''; // 주소 변수
+                    let extraAddr = ''; // 참고항목 변수
 
                     //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
                     if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
@@ -231,7 +262,7 @@
                             extraAddr = ' (' + extraAddr + ')';
                         }
 
-                        console.log(extraAddr);
+                        // console.log(extraAddr);
                         // 조합된 참고항목을 해당 필드에 넣는다.
                         // document.getElementById("sample3_extraAddress").value = extraAddr;
 
@@ -264,7 +295,7 @@
             // iframe을 넣은 element를 보이게 한다.
             element_wrap.style.display = 'block';
             address_modal.style.display = 'block';
-        }
+        })
 
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("phone").addEventListener("keyup", function(event) {
@@ -275,7 +306,7 @@
         function inputPhoneNumber(event) {
             const phone = event.target;
             if( event.keyCode !== 8 ) {
-                const regExp = new RegExp( /^[0-9]{2,3}-^[0-9]{3,4}-^[0-9]{4}/g );
+                const regExp = new RegExp( /^[0-1]{3}-^[0-9]{4}-^[0-9]{4}/g );
                 if( phone.value.replace( regExp, "").length !== 0 ) {
                     if( checkPhoneNumber( phone.value ) === true ) {
                         let number = phone.value.replace( /[^0-9]/g, "" );
@@ -328,22 +359,28 @@
 
         $('#email').on('change', function() {
             const email =$(this).val();
-            console.log(email);
             const regExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+            const form = $("#email-validate");
             if(!regExp.test(email)) {
+                form.text("이메일 형식 확인해 주세요.")
+                $(this).focus()
                 return;
             }
+            form.text("")
 
             $.get({
                 url: "/api/v1/member/check/"+email
             }).done((data) => {
-                console.log(data);
+                form.text("사용중인 이메일 입니다.")
             }).fail((data) => {
-                console.log(data.responseJSON.message);
+                if(data.status === "400") {
+
+                }
             })
         })
 
         $('#password-check').on('change', function() {
+
             if($('#password').val() !== $(this).val()) {
                 $(this).val("")
                 $('#validation-form').addClass('was-validated')
@@ -356,5 +393,82 @@
                 $('#validation-form').addClass('was-validated')
             }
         })
+
+        $('#authBtn').on('click', () => {
+
+            const regExp = new RegExp( /[0-1]{3}-[0-9]{4}-[0-9]{4}/g );
+            if( regExp.test( $("#phone").val() ) === false ) {
+                $('#phone-validate').text("번호 형식을 확인해 주세요.")
+                return;
+            }
+            $('#phone-validate').text("")
+
+            $.post({
+                url: "/api/v1/auth/phone",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ "number" : $('#phone').val() })
+            }).done((data) => {
+                if(data.code === "200") {
+                    doTimer();
+                } else {
+                    alert(data.msg);
+                }
+            })
+        })
+
+        let intervalVar = undefined;
+        let timeSecond = undefined;
+
+        function doTimer() {	// 인증번호 전송 버튼을 클릭!
+            const auth_btn = document.getElementById("authBtn");
+            auth_btn.disabled = true;
+            auth_btn.value = "재전송";	// 인증번호 전송 버튼 text가 '재전송'으로 바뀜.// 인증번호 입력란에 해당 임시코드가 노출된다.
+            timeSecond = 180;	// 타이머 3분
+            document.getElementById('time_count').innerText = getTimeString(timeSecond);	// 타이머 입력창에 시간이 노출된다.
+            document.getElementById("typingcode").hidden = false;
+
+            if (intervalVar != undefined) {
+                clearInterval(intervalVar);
+            }
+
+            intervalVar = setInterval(function () {
+                if (timeSecond != 0) {
+                    timeSecond = timeSecond - 1;
+                    document.getElementById('time_count').innerText = getTimeString(timeSecond);	// 0초가 아니라면 1초씩 감소 되면서 타이머 입력창에 보여진다.
+                } else {
+                    clearInterval(intervalVar);
+                    intervalVar = false;	// 그 외 동작은 clearInterval 메소드로 인해 시간이 멈춘다.
+                }
+                if(timeSecond < 150) {
+                    auth_btn.disabled = false;
+                }
+
+                if (timeSecond == -1 || intervalVar == false) {
+                    document.getElementById('time_count').innerText = ""
+                }
+            }, 1000);	// 180초에서 1000ms초 간격으로 시간이 흐른다.
+        }
+
+        function getTimeString(second) {	// 타이머 계산법
+            let minute = '' + (Math.floor(second / 60));	// 1분
+            let dividedSec = second % 60;	//  60초
+            if (dividedSec < 10) {	// 만약 10보다 작은 1~9초는 앞에 '0'을 붙인다.
+                dividedSec = '0' + dividedSec;
+            }
+            // ex) 3:00 -> 3분
+            return minute + ":" + dividedSec;
+        }
+
+        function doCodeCheck() {
+            const typingCode = document.getElementById("typingcode").value;	// 입력코드 요소 셀렉팅
+            if (typingCode == '') {
+                alert('인증번호를 입력하세요.');
+                return;
+            }
+            if (timeSecond == -1 || intervalVar == false) {
+                alert('인증번호 유효시간이 초과하였습니다. 인증번호를 재전송 해주세요.');
+            }	// 시간이 0초가 되어서 시간이 다된 상태에서 인증코드를 입력하게 된다면 위 안내문이 보여진다.
+        }
+
     </script>
 </div>

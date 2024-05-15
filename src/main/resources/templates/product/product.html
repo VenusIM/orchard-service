@@ -4,54 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layout/layout}"
       layout:fragment="Content">
-<style>
-    .product-image {
-        height: 300px;
-    }
-
-    .ribbon {
-        --f: 10px; /* control the folded part*/
-        --r: 15px; /* control the ribbon shape */
-        --t: 20px; /* the top offset */
-
-        position: absolute;
-        inset: var(--t) calc(-1*var(--f)) auto auto;
-        padding: 5px 20px var(--f) calc(20px + var(--r));
-        clip-path:
-                polygon(0 0,100% 0,100% calc(100% - var(--f)),calc(100% - var(--f)) 100%,
-                calc(100% - var(--f)) calc(100% - var(--f)),0 calc(100% - var(--f)),
-                var(--r) calc(50% - var(--f)/2));
-        background: #f67daa;
-        box-shadow: 0 calc(-1*var(--f)) 0 inset #0005;
-    }
-
-
-    .ribbon-box {
-        position:relative;
-    }
-
-    .percent-sale {
-        color: red !important;
-    }
-
-    .product-title {
-        font-size: 30px;
-    }
-
-    .price {
-        font-size: 20px;
-    }
-
-    .product-header-text {
-        font-size: 40px !important;
-        font-family: jua;
-    }
-
-    .product {
-        padding: 20px 0 !important;
-    }
-
-</style>
+<link th:inline="css" th:href="@{/css/product/product.css}" rel="stylesheet"/>
 <main>
     <section style="padding-top: 40px;">
     </section>
@@ -78,7 +31,7 @@
                                         <div class="card ribbon-box">
                                             <div class="ribbon"><div><span class="percent-sale">20%</span> Sale</div></div>
                                             <!-- Product image-->
-                                            <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry2.jpeg}"/>
+                                            <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry14.jpeg}"/>
                                             <!-- Product details-->
                                             <div class="card-body p-4">
                                                 <div class="text-center">
@@ -101,7 +54,7 @@
                                             <!-- Sale badge-->
                                             <div class="ribbon"><div><span class="percent-sale">20%</span> Sale</div></div>
                                             <!-- Product image-->
-                                            <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry5.jpeg}" alt="..." />
+                                            <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry14.jpeg}" alt="..." />
                                             <!-- Product details-->
                                             <div class="card-body p-4">
                                                 <div class="text-center">
@@ -142,18 +95,4 @@
     </section>
 </main><!-- End #main -->
 
-<script th:inline="javascript">
-    $('#cherry1').on('click', () => {
-        $.get({
-            url: "/product/detail"
-        }).done((data) => {
-            $('main').html(data);
-
-        })
-    })
-
-    $('#cherry2').on('click', () => {
-
-    })
-
-</script>
+<script th:src="@{/js/product/product.js}"></script>

@@ -2,6 +2,7 @@ server:
   port: 8080
 
 spring:
+
   application:
     name: orchard-service
   h2:
@@ -10,7 +11,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
         hibernate:
           format_sql: true
@@ -33,6 +34,17 @@ jwt:
 nice:
   client-id: R2_4177c272c6b746e8aba9d652b6f072b1
   secret-key: f0d2609ee0da4f99923ace4723142983
+
+ncp:
+  from: 01050991560
+  serviceId: ncp:sms:kr:331715689787:orchard-sms
+  accessKey: pukYZhVuMgVcdIOSR5xo
+  secretKey: HhbJNJzoP9ayCAingEEP9FAu444um0ZlKjVYBCcv
+  smsApiUrl: https://sens.apigw.ntruss.com
+
+cookie:
+  secure: false
+  domain: localhost
 
 logging:
   level:

@@ -1,9 +1,13 @@
 package com.orchard.domain.auth.application;
 
+import com.orchard.domain.auth.domain.persist.Message;
+import com.orchard.domain.auth.domain.persist.MessageRepository;
 import com.orchard.domain.auth.domain.persist.RefreshTokenEntity;
 import com.orchard.domain.auth.domain.persist.RefreshTokenRepository;
-import com.orchard.global.common.RefreshToken;
+import com.orchard.domain.auth.dto.SmsRequestDto;
+import com.orchard.global.common.*;
 import com.orchard.global.jwt.error.TokenNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,28 +18,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.orchard.domain.member.domain.vo.UserEmail;
 import com.orchard.domain.member.domain.vo.UserPassword;
-import com.orchard.global.common.AccessToken;
-import com.orchard.global.common.TokenDTO;
-import com.orchard.global.common.TokenProvider;
 import com.orchard.global.error.exception.ErrorCode;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class MemberAuthService {
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder managerBuilder;
     private final RefreshTokenRepository tokenRepository;
-
-    public MemberAuthService(TokenProvider tokenProvider, AuthenticationManagerBuilder managerBuilder, RefreshTokenRepository tokenRepository) {
-        this.tokenProvider = tokenProvider;
-        this.managerBuilder = managerBuilder;
-        this.tokenRepository = tokenRepository;
-
-    }
+    private final MessageRepository messageRepository;
 
     // 로그인
     public TokenDTO authorize(final UserEmail userEmail, final UserPassword userPassword) {
@@ -91,5 +88,26 @@ public class MemberAuthService {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         Optional<RefreshTokenEntity> refreshTokenEntity = tokenRepository.findByEmail(UserEmail.from(principal.getUsername()));
         refreshTokenEntity.ifPresent(tokenRepository::delete);
+    }
+
+    public ResultResponseDto checkCode(SmsRequestDto smsRequestDto) {
+        Optional<Message> message = messageRepository.findByPhoneNumber(smsRequestDto.getPhoneNumber());
+        ResultResponseDto resultResponseDto = new ResultResponseDto();
+        if(message.isEmpty()) {
+            resultResponseDto.setCode("500");
+            resultResponseDto.setMsg("코드가 존재하지 않습니다.");
+        } else if(message.get().getCode().equals(smsRequestDto.getCode())) {
+            if(message.get().getUpdateTime().plusMinutes(3).isBefore(LocalDateTime.now())) {
+                resultResponseDto.setCode("500");
+                resultResponseDto.setMsg("만료된 코드 입니다.");
+            } else {
+                resultResponseDto.setCode("200");
+                resultResponseDto.setMsg("코드가 일치합니다.");
+            }
+        } else {
+            resultResponseDto.setCode("500");
+            resultResponseDto.setMsg("코드가 일치하지 않습니다.");
+        }
+        return resultResponseDto;
     }
 }

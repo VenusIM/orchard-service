@@ -43,7 +43,7 @@ main {
 :root {
   --color-default: #222222;
   /*--color-primary: #008374;*/
-  --color-primary: #810541;
+  --color-primary: #F08080;
   --color-secondary: #f85a40;
 }
 
@@ -520,7 +520,7 @@ section {
     inset: 0;
     padding: 50px 0 10px 0;
     margin: 0;
-    background: #810541;
+    background: #F08080;
     overflow-y: auto;
     transition: 0.3s;
     z-index: 9998;
@@ -576,8 +576,8 @@ section {
     padding: 10px 0;
     margin: 10px 20px;
     transition: all 0.5s ease-in-out;
-    background-color: #007466;
-    border: 1px solid #006459;
+    background-color: #810541;
+    border: 1px solid;
   }
 
   .navbar .dropdown>.dropdown-active,
