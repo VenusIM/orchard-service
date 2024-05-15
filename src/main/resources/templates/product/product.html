@@ -5,6 +5,23 @@
       layout:decorate="~{common/layout/layout}"
       layout:fragment="Content">
 <link th:inline="css" th:href="@{/css/product/product.css}" rel="stylesheet"/>
+<style>
+    main {
+        background-image: url("../../assets/img/cherry/cherry13.jpeg");
+        background-size: cover;
+        position: relative;
+        isolation: isolate;
+    }
+
+    main::after {
+        content: '';
+        position: absolute;
+        background: white;
+        z-index: -999;
+        inset: 0;
+        opacity: 0.73;
+    }
+</style>
 <main>
     <section style="padding-top: 40px;">
     </section>
@@ -44,7 +61,7 @@
                                             </div>
                                             <!-- Product actions-->
                                             <div id="cherry1" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">상세보기</a></div>
+                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">상세보기</a></div>
                                             </div>
                                         </div>
                                     </div>
@@ -75,7 +92,7 @@
                                             </div>
                                             <!-- Product actions-->
                                             <div id="cherry2" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">상세보</a></div>
+                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">상세보기</a></div>
                                             </div>
                                         </div>
                                     </div>

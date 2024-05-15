@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class UserAddress {
 
     @NotBlank(message = "주소는 필수 입력사항 입니다.")
-    @Column(unique = true, nullable = false, length = 200)
+    @Column(nullable = false, length = 200)
     private String address;
 
     public static UserAddress from(final String address) {

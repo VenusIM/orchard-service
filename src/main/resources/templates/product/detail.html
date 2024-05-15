@@ -5,6 +5,11 @@
       layout:decorate="~{common/layout/layout}"
       layout:fragment="Content">
 <link th:inline="css" th:href="@{/css/product/product.css}" rel="stylesheet"/>
+<style>
+    main {
+        background-color: white;
+    }
+</style>
 <main>
     <section style="padding-top: 40px;">
         <div class="container">
@@ -62,7 +67,7 @@
                                 <div class="float-end" style="margin-top: 10px">
                                     <div>총 상품 금액 <strong id="price" th:text="${#numbers.formatInteger(product.price/100 * (100 - product.sale), 3, 'COMMA')}"></strong>원</div>
                                     <div style="margin-top: 10px">
-                                        <button id="cart" class="btn btn-info" style="margin-right: 10px">장바구니</button>
+                                        <button id="cart-product" class="btn btn-info" style="margin-right: 10px">장바구니</button>
                                         <button id="buy" class="btn btn-success">구매하기</button>
                                     </div>
                                 </div>
@@ -75,22 +80,17 @@
     </section>
     <section style="margin-top: 0">
         <div class="container">
-            <ul class="nav nav-tabs col-md-12 col-12">
-                <li class="nav-item col-md-6 col-6">
-                    <a class="nav-link active" aria-current="page" href="#">상세설명</a>
-                </li>
-                <li class="nav-item col-md-6 col-6">
-                    <a class="nav-link active" aria-current="page" href="#">상품후기</a>
-                </li>
-                <!--<li class="nav-item col-md-3 col-3">
-                    <a class="nav-link active" aria-current="page" href="#">상품문의</a>
-                    <div>준비중3</div>
-                </li>
-                <li class="nav-item col-md-3 col-3">
-                    <a class="nav-link active" aria-current="page" href="#">교환/반품/배송</a>
-                    <div>준비중3</div>
-                </li>-->
-            </ul>
+            <nav>
+                <div class="nav nav-tabs col-md-12 col-12" id="nav-tab" role="tablist">
+                    <button class="col-md-6 col-6 nav-link active" id="nav-detail-tab" data-bs-toggle="tab" data-bs-target="#nav-detail" type="button" role="tab" aria-controls="nav-detail" aria-selected="true">설명</button>
+                    <button class="col-md-6 col-6 nav-link" id="nav-review-tab" data-bs-toggle="tab" data-bs-target="#nav-review" type="button" role="tab" aria-controls="nav-review" aria-selected="false">후기</button>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-detail" role="tabpanel" aria-labelledby="nav-detail-tab">상품 설명 준비중</div>
+                <div class="tab-pane fade" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">리뷰 준비 중</div>
+            </div>
+
         </div>
     </section>
 
@@ -108,6 +108,31 @@
                             <div class="group wd-50">
                                 <label for="anno-user" class="label">주문자명</label>
                                 <input id="anno-user" type="text" class="form-control" maxlength="10">
+                            </div>
+                            <div class="mb-3" style="margin-top: 10px">
+                                <label for="address">주소</label>
+                                <div style="display: flex">
+                                    <div  class="w-25">
+                                        <input type="text" id="postcode" placeholder="우편번호" name="postCode" class="form-control" required disabled>
+                                        <div class="invalid-feedback">
+                                            우편번호를 확인해 주세요.
+                                        </div>
+                                    </div>
+                                    <button id="findPost" type="button" class="btn btn-sm" style="border: 1px solid gray; margin-left: 5px">
+                                        우편번호 찾기
+                                    </button>
+                                </div>
+                                <div class="modal-address" id="modal-address" style="position:relative; width: 100%; left: -10px">
+                                    <div id="popup-wrap">
+                                        <!-- 우편번호 API가 띄워질 공간 -->
+                                    </div>
+                                </div>
+                                <input type="text" id="address" placeholder="주소" class="form-control col-xs-4" required disabled>
+                                <div class="invalid-feedback">
+                                    주소를 확인해주세요.
+                                </div>
+                                <input type="text" id="detailAddress" placeholder="상세주소" class="form-control col-xs-4">
+                                <input type="hidden" id="full-address" name="address">
                             </div>
                             <div id="phone-group" class="mb-3" style="margin-top: 10px">
                                 <label for="phone">휴대폰 번호</label>
@@ -141,6 +166,7 @@
 </main><!-- End #main -->
 
 <script src="https://pay.nicepay.co.kr/v1/js/"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script th:inline="javascript">
 
     const pojo = parseInt([[${product.price}]]) / 100 * (100 - parseInt([[${product.sale}]]))
@@ -176,14 +202,14 @@
         $('#price').text(cn1)
     })
 
-    $('#cart').on('click', () => {
+    $('#cart-product').on('click', () => {
         if(isEmpty(accessToken)) {
-            alert("로그인 후 이용해 주세요.");
-            return;
+            const key = "orchard-product"+[[${product.id}]];
+            // window.localStorage.setItem(key, $("product-count").text());
         }
     })
 
-    function order(name, phone) {
+    function order(name, phone, address) {
         const json = {
             "productId" : [[${product.id}]],
             "price" : [[${product.price}]],
@@ -196,6 +222,10 @@
 
         if(!isEmpty(phone)) {
             json["phoneNumber"] = phone;
+        }
+
+        if(!isEmpty(address)) {
+            json["address"] = address;
         }
 
         $.post({
@@ -221,6 +251,15 @@
     $('#anno-buy').on('click', function(e) {
         const name = $("#anno-user").val();
         const phone = $("#phone").val();
+        const address = $('#address').val();
+        const detail = $('#detailAddress').val();
+        let fullAddress;
+
+        if (isEmpty(detail)) {
+            fullAddress = address;
+        } else {
+            fullAddress = address + " " + detail;
+        }
 
         e.preventDefault();
         const form = $('#validation-form')
@@ -243,7 +282,7 @@
                 $('#typingcode').focus();
                 return;
             }
-            order(name, phone);
+            order(name, phone, fullAddress);
         })
     })
 
@@ -255,7 +294,7 @@
             $('#anno-modal').modal("show");
             return;
         }
-        order("", "");
+        order("", "", "");
     })
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -384,6 +423,78 @@
             this.reset();
         })
         $('#anno-modal').modal('hide');
+    })
+
+    const element_wrap = document.getElementById('popup-wrap');
+    const address_modal = document.getElementById('modal-address');
+    $('#findPost').on('click', () => {
+        // 현재 scroll 위치를 저장해놓는다.
+        const currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+        new daum.Postcode({
+            oncomplete: function(data) {
+                // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                let addr = ''; // 주소 변수
+                let extraAddr = ''; // 참고항목 변수
+
+                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                    addr = data.roadAddress;
+                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                    addr = data.jibunAddress;
+                }
+
+                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                if(data.userSelectedType === 'R'){
+                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                        extraAddr += data.bname;
+                    }
+                    // 건물명이 있고, 공동주택일 경우 추가한다.
+                    if(data.buildingName !== '' && data.apartment === 'Y'){
+                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                    if(extraAddr !== ''){
+                        extraAddr = ' (' + extraAddr + ')';
+                    }
+
+                    // console.log(extraAddr);
+                    // 조합된 참고항목을 해당 필드에 넣는다.
+                    // document.getElementById("sample3_extraAddress").value = extraAddr;
+
+                } else {
+                    // document.getElementById("sample3_extraAddress").value = '';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('postcode').value = data.zonecode;
+                document.getElementById("address").value = addr;
+                // 커서를 상세주소 필드로 이동한다.
+                document.getElementById("detailAddress").focus();
+
+                // iframe을 넣은 element를 안보이게 한다.
+                // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+                element_wrap.style.display = 'none';
+                address_modal.style.display = 'none';
+
+                // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+                document.body.scrollTop = currentScroll;
+            },
+            // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+            onresize : function(size) {
+                element_wrap.style.height = size.height+'px';
+            },
+            width : '100%',
+            height : '100%'
+        }).embed(element_wrap);
+
+        // iframe을 넣은 element를 보이게 한다.
+        element_wrap.style.display = 'block';
+        address_modal.style.display = 'block';
     })
 
 </script>

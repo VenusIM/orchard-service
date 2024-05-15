@@ -1,5 +1,6 @@
 package com.orchard.domain.order.dto;
 
+import com.orchard.domain.member.domain.vo.UserAddress;
 import com.orchard.domain.member.domain.vo.UserName;
 import com.orchard.domain.member.domain.vo.UserPhoneNumber;
 import com.orchard.domain.order.domain.persist.Order;
@@ -15,6 +16,7 @@ public class OrderResponseDto {
     private Long memberIdx;
     private UserName userName;
     private UserPhoneNumber userPhoneNumber;
+    private UserAddress userAddress;
     private String status;
     private Product product;
     private Integer count;

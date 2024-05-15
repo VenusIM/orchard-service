@@ -53,9 +53,11 @@ public class OrderService {
             orderBuilder.memberIdx(member.getId());
             orderBuilder.userName(member.getName());
             orderBuilder.userPhoneNumber(member.getPhoneNumber());
+            orderBuilder.userAddress(member.getAddress());
         } else {
             orderBuilder.userPhoneNumber(orderRequestDto.getPhoneNumber());
             orderBuilder.userName(orderRequestDto.getUserName());
+            orderBuilder.userAddress(orderRequestDto.getUserAddress());
         }
         Order order = orderRepository.save(orderBuilder.build());
         OrderResponseDto orderResponseDto = new OrderResponseDto(order);
@@ -67,11 +69,14 @@ public class OrderService {
     @Transactional(rollbackOn = Exception.class)
     public List<OrderResponseDto> update(JsonNode responseNode) {
         final String orderId = responseNode.get("orderId").asText();
+        final String status = responseNode.get("status").asText();
+        final String receiptUrl = responseNode.get("receiptUrl").asText();
+        final String signature = responseNode.get("signature").asText();
         List<Order> orderList = orderRepository.findAllByOrderNo(orderId).get();
         final String tid = responseNode.get("tid").asText();
         List<OrderResponseDto> orderResponseDtos = new ArrayList<>();
         for(final Order order : orderList) {
-            order.updateOrder(tid, "COMPLETE");
+            order.updateOrder(tid, status, receiptUrl, signature);
             Order result = orderRepository.save(order);
             orderResponseDtos.add(new OrderResponseDto(result));
         }
