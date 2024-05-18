@@ -203,13 +203,13 @@
     })
 
     $('#cart-product').on('click', () => {
-        if(isEmpty(accessToken)) {
-            const key = "orchard-product"+[[${product.id}]];
-            window.localStorage.setItem(key, $("#product-count").text());
-            if(confirm("상품이 장바구니에 담겼습니다. 이동하시겠습니까?")) {
-                window.location.href = "/cart/list"
-            }
+
+        const key = "orchard-product" + [[${product.id}]];
+        window.localStorage.setItem(key, $("#product-count").text());
+        if (confirm("상품이 장바구니에 담겼습니다. 이동하시겠습니까?")) {
+            window.location.href = "/cart/list"
         }
+
     })
 
     function order(name, phone, address) {

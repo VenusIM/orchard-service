@@ -197,10 +197,10 @@
 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<section style="padding: 120px !important;">
+<section style="margin: 120px 0 !important;">
 <div class="container">
   <div class="row">
-    <div class="col-xl-8">
+    <div class="col-md-8 col-12">
 
       <div id="no-prod" class="card border shadow-none" hidden="hidden">
         <div class="card-body">
@@ -301,7 +301,7 @@
       </div> <!-- end row-->
     </div>
 
-    <div class="col-xl-4">
+    <div class="col-md-4 col-12">
       <div class="mt-5 mt-lg-0">
         <div class="card border shadow-none">
           <div class="card-header bg-transparent border-bottom py-3 px-4">
@@ -438,6 +438,8 @@
         pojoTotal += pojoPrice1 * parseInt(product1);
         saleTotal += pojoPrice1 / 100 * sale1 * parseInt(product1);
       }
+    } else {
+      $('#prod1').remove();
     }
 
     if(!isEmpty(product2) && parseInt(product2) > 0) {
@@ -450,6 +452,8 @@
         pojoTotal += + pojoPrice2 * parseInt(product2);
         saleTotal += pojoPrice2 / 100 * sale2 * parseInt(product2)
       }
+    } else {
+      $('#prod2').remove();
     }
 
     if(isEmpty(product1) && isEmpty(product2)) {
@@ -612,6 +616,10 @@
   function order(name, phone, address) {
     let count = "";
     let productId = "";
+    if((isEmpty($('#check1')) && isEmpty($('#check2')))  || (!$('#check1').is(':checked') && !$('#check2').is(':checked'))) {
+      alert('선택한 상품이 없습니다.')
+      return;
+    }
 
     if($('#check1').is(':checked')) {
       count += window.localStorage.getItem("orchard-product1");
