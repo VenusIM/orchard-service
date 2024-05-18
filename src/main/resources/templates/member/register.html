@@ -172,6 +172,17 @@
             if(!form.get(0).checkValidity()) {
                 return;
             }
+
+            const email = $('#email').val();
+            $.get({
+                url: "/api/v1/member/check/"+email
+            }).done((data) => {
+                form.text("사용중인 이메일 입니다.")
+                $('#email').val("");
+                $('#email').focus();
+                return;
+            })
+
             const code = $('#typingcode').val();
             if(isEmpty(code)) {
                 return;
@@ -191,13 +202,13 @@
                 }
 
                 const name = $('#name').val();
-                const email = $('#email').val();
                 const phone = $('#phone').val();
                 const postcode = $('#postcode').val();
                 const address = $('#address').val();
                 const detail = $('#detailAddress').val();
                 const password = $('#password').val();
                 if (isEmpty(name) || isEmpty(email) || isEmpty(phone) || isEmpty(postcode) || isEmpty(address)) {
+                    alert('상세 주소를 제외한 모든 항목은 필수 값 입니다.')
                     return;
                 }
 
@@ -207,6 +218,7 @@
                 }
 
                 if (password !== $('#password-check').val()) {
+                    $('#password').focus();
                     return;
                 }
 
