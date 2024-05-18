@@ -21,6 +21,7 @@ public class OrderResponseDto {
     private Product product;
     private Integer count;
     private String clientId;
+    private String host;
 
     public OrderResponseDto(Order order) {
         this.orderNo = order.getOrderNo();

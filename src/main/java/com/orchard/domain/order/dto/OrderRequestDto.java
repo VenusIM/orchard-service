@@ -21,9 +21,9 @@ public class OrderRequestDto {
     @JsonProperty("address")
     private UserAddress userAddress;
 
-    private Long productId;
+    private String productId;
 
     private String price;
 
-    private int count;
+    private String count;
 }

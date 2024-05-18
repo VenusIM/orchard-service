@@ -11,3 +11,8 @@ spring:
 cookie:
   secure: true
   domain: kingcherry.store
+
+nice:
+  return-host: https://kingcherry.store
+  client-id: R2_4177c272c6b746e8aba9d652b6f072b1
+  secret-key: f0d2609ee0da4f99923ace4723142983

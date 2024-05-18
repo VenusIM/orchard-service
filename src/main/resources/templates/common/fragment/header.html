@@ -167,8 +167,8 @@
       <ul id="nav">
         <li id="intro"><a href="#introduce">소개</a></li>
         <li id="product"><a href="#product">상품</a></li>
-        <li id="notice"><a href="#notice">공지사항</a></li>
-        <li id="review"><a href="#review">리뷰</a></li>
+   <!--     <li id="notice"><a href="#notice">공지사항</a></li>
+        <li id="review"><a href="#review">리뷰</a></li>-->
         <li></li>
         <li></li>
         <li id="anon" hidden="hidden">
@@ -184,7 +184,7 @@
             <li id="logout"><a href="#">로그아웃</a></li>
           </ul>
         </li>
-        <li id="cart"><a href="#cart"><i class="fas fa-shopping-cart"></i></a></li>
+        <li id="cart"><a><i class="fas fa-shopping-cart"></i></a></li>
         <!--<li><a href="https://www.instagram.com/kk_ing_cherry/?next=%2F">인스타그램<i class="bi bi-instagram d-flex ms-4"></i></a></li>-->
       </ul>
     </nav>
@@ -316,12 +316,12 @@
 
   function active() {
     const path = window.location.pathname
-    console.log(path)
 
     $('#intro').removeClass("active");
     $('#product').removeClass("active");
     $('#notice').removeClass("active");
     $('#review').removeClass("active");
+    $('#cart').removeClass("active");
 
     if(path.startsWith("/product")) {
       $('#product').addClass("active");
@@ -329,6 +329,8 @@
       $('#notice').addClass("active");
     } else if(path.startsWith("/review")) {
       $('#review').addClass("active");
+    } else if(path.startsWith("/cart")) {
+      $('#cart').addClass("active");
     } else {
       $('#intro').addClass("active");
     }
@@ -408,5 +410,9 @@
     }).done(() => {
       window.location.href = "/"
     })
+  })
+
+  $("#cart").on('click', () => {
+    window.location.href = "/cart/list"
   })
 </script>

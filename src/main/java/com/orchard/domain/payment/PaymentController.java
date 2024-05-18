@@ -1,37 +1,86 @@
 package com.orchard.domain.payment;
 
+import java.time.Duration;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.orchard.domain.ncp.NcpService;
 import com.orchard.domain.order.application.OrderService;
 import com.orchard.domain.order.dto.OrderResponseDto;
-import com.orchard.domain.product.application.ProductService;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.DefaultUriBuilderFactory;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 @Controller("/payment")
 public class PaymentController {
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private WebClient client;
     private final String CLIENT_ID;
     private final String SECRET_KEY;
-
     private final OrderService orderService;
+    private final NcpService ncpService;
+
     public PaymentController(@Value("${nice.client-id}") String clientId,
                              @Value("${nice.secret-key}") String secretKey,
-                             OrderService orderService) {
+                             OrderService orderService,
+                             NcpService ncpService) {
         this.CLIENT_ID = clientId;
         this.SECRET_KEY = secretKey;
         this.orderService = orderService;
+        this.ncpService = ncpService;
+    }
+
+    @PostConstruct
+    private void init() throws Exception {
+
+        ConnectionProvider provider = ConnectionProvider.builder("custom-provider")
+                .maxConnections(20)
+                .maxIdleTime(Duration.ofSeconds(58))
+                .maxLifeTime(Duration.ofSeconds(58))
+                .pendingAcquireTimeout(Duration.ofSeconds(60))
+                .pendingAcquireMaxCount(-1)
+                .evictInBackground(Duration.ofSeconds(30))
+                .lifo()
+                .metrics(true)
+                .build();
+
+        SslContext sslContext = SslContextBuilder
+                .forClient()
+                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                .build();
+
+        client = WebClient.builder()
+                .clientConnector(
+                        new ReactorClientHttpConnector(
+                                HttpClient.create(provider)
+                                        .secure(t -> t.sslContext(sslContext))
+                                        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 20000) //miliseconds
+                                        .doOnConnected(
+                                                conn -> conn.addHandlerLast(new ReadTimeoutHandler(30))  //sec
+                                                        .addHandlerLast(new WriteTimeoutHandler(60)) //sec
+                                        ).responseTimeout(Duration.ofSeconds(60))
+                        )
+                )
+                .baseUrl("https://sandbox-api.nicepay.co.kr")
+                .build();
     }
 
     @RequestMapping("/serverAuth")
@@ -40,30 +89,30 @@ public class PaymentController {
             @RequestParam Long amount,
             Model model) throws Exception {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        String accessToken = getAccessToken();
 
-        Map<String, Object> AuthenticationMap = new HashMap<>();
-        AuthenticationMap.put("amount", String.valueOf(amount));
+        //승인 요청
+        Map<String, Object> authenticationMap = new HashMap<>();
+        authenticationMap.put("amount", String.valueOf(amount));
 
-        HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(AuthenticationMap), headers);
+        JsonNode responseNode = client.post()
+                .uri("/v1/payments/"+tid)
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(authenticationMap)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
 
-        ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
-                "https://sandbox-api.nicepay.co.kr/v1/payments/" + tid, request, JsonNode.class);
-
-        JsonNode responseNode = responseEntity.getBody();
         String resultCode = responseNode.get("resultCode").asText();
         model.addAttribute("resultMsg", responseNode.get("resultMsg").asText());
 
         if (resultCode.equalsIgnoreCase("0000")) {
             // 결제 성공 비즈니스 로직 구현
-            List<OrderResponseDto> orderResponseDto = orderService.update(responseNode);
-        } else {
-            // 결제 실패 비즈니스 로직 구현
+            model.addAttribute("orders", orderService.update(responseNode));
+            return "/payment/complete";
         }
-
-        return "/response";
+        return "/payment/error";
     }
 
     @RequestMapping("/cancelAuth")
@@ -72,21 +121,22 @@ public class PaymentController {
             @RequestParam String amount,
             Model model) throws Exception {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         Map<String, Object> AuthenticationMap = new HashMap<>();
         AuthenticationMap.put("amount", amount);
         AuthenticationMap.put("reason", "test");
         AuthenticationMap.put("orderId", UUID.randomUUID().toString());
 
-        HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(AuthenticationMap), headers);
+//        HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(AuthenticationMap), headers);
 
-        ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
-                "https://sandbox-api.nicepay.co.kr/v1/payments/" + tid + "/cancel", request, JsonNode.class);
+        /*JsonNode responseNode = webClient.post()
+                .uri(tid+"/cancel")
+                .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(AuthenticationMap)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
 
-        JsonNode responseNode = responseEntity.getBody();
         String resultCode = responseNode.get("resultCode").asText();
         model.addAttribute("resultMsg", responseNode.get("resultMsg").asText());
 
@@ -96,7 +146,7 @@ public class PaymentController {
             // 취소 성공 비즈니스 로직 구현
         } else {
             // 취소 실패 비즈니스 로직 구현
-        }
+        }*/
 
         return "/response";
     }
@@ -114,4 +164,16 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    private String getAccessToken() {
+
+        JsonNode accessToken = client.post()
+                .uri("/v1/access-token")
+                .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+
+        return accessToken.get("accessToken").asText();
+    }
 }

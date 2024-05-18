@@ -29,4 +29,10 @@ public class ProductController {
         model.addAttribute("product", productService.findById(Long.parseLong(number)));
         return "product/detail";
     }
+
+    @GetMapping("cart")
+    public String cart(Model model) {
+        model.addAttribute("products", productService.findAll());
+        return "product/cart";
+    }
 }

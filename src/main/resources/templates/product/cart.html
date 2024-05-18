@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/layout}"
+      layout:fragment="Content">
+<link th:inline="css" th:href="@{/css/product/product.css}" rel="stylesheet"/>
+<style>
+  main {
+    background-color: white;
+  }
+
+  body{
+    background-color: #f1f3f7;
+  }
+
+  .avatar-lg {
+    height: 5rem;
+    width: 5rem;
+  }
+
+  .font-size-18 {
+    font-size: 18px!important;
+  }
+
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  a {
+    text-decoration: none!important;
+  }
+
+  .w-xl {
+    min-width: 160px;
+  }
+
+  .card {
+    margin-bottom: 24px;
+    -webkit-box-shadow: 0 2px 3px #e4e8f0;
+    box-shadow: 0 2px 3px #e4e8f0;
+  }
+
+  .card {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #eff0f2;
+    border-radius: 1rem;
+  }
+</style>
+  <!--<section style="background-color: #eee;">
+    <div id="cart-target" class="container py-5">
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-12 col-xl-10">
+          <div class="card shadow-0 border rounded-3">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                  <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/img%20(4).webp"
+                         class="w-100" />
+                    <a href="#!">
+                      <div class="hover-overlay">
+                        <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-6">
+                  <h5>Quant trident shirts</h5>
+                  <div class="d-flex flex-row">
+                    <div class="text-danger mb-1 me-2">
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                    </div>
+                    <span>310</span>
+                  </div>
+                  <div class="mt-1 mb-0 text-muted small">
+                    <span>100% cotton</span>
+                    <span class="text-primary"> • </span>
+                    <span>Light weight</span>
+                    <span class="text-primary"> • </span>
+                    <span>Best finish<br /></span>
+                  </div>
+                  <div class="mb-2 text-muted small">
+                    <span>Unique design</span>
+                    <span class="text-primary"> • </span>
+                    <span>For men</span>
+                    <span class="text-primary"> • </span>
+                    <span>Casual<br /></span>
+                  </div>
+                  <p class="text-truncate mb-4 mb-md-0">
+                    There are many variations of passages of Lorem Ipsum available, but the
+                    majority have suffered alteration in some form, by injected humour, or
+                    randomised words which don't look even slightly believable.
+                  </p>
+                </div>
+                <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                  <div class="d-flex flex-row align-items-center mb-1">
+                    <h4 class="mb-1 me-1">$13.99</h4>
+                    <span class="text-danger"><s>$20.99</s></span>
+                  </div>
+                  <h6 class="text-success">Free shipping</h6>
+                  <div class="d-flex flex-column mt-4">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button">Details</button>
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button">
+                      Add to wishlist
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-12 col-xl-10">
+          <div class="card shadow-0 border rounded-3">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                  <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/new/img(4).webp"
+                         class="w-100" />
+                    <a href="#!">
+                      <div class="hover-overlay">
+                        <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-6">
+                  <h5>Quant olap shirts</h5>
+                  <div class="d-flex flex-row">
+                    <div class="text-danger mb-1 me-2">
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star"></i>
+                    </div>
+                    <span>289</span>
+                  </div>
+                  <div class="mt-1 mb-0 text-muted small">
+                    <span>100% cotton</span>
+                    <span class="text-primary"> • </span>
+                    <span>Light weight</span>
+                    <span class="text-primary"> • </span>
+                    <span>Best finish<br /></span>
+                  </div>
+                  <div class="mb-2 text-muted small">
+                    <span>Unique design</span>
+                    <span class="text-primary"> • </span>
+                    <span>For men</span>
+                    <span class="text-primary"> • </span>
+                    <span>Casual<br /></span>
+                  </div>
+                  <p class="text-truncate mb-4 mb-md-0">
+                    There are many variations of passages of Lorem Ipsum available, but the
+                    majority have suffered alteration in some form, by injected humour, or
+                    randomised words which don't look even slightly believable.
+                  </p>
+                </div>
+                <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                  <div class="d-flex flex-row align-items-center mb-1">
+                    <h4 class="mb-1 me-1">$14.99</h4>
+                    <span class="text-danger"><s>$21.99</s></span>
+                  </div>
+                  <h6 class="text-success">Free shipping</h6>
+                  <div class="d-flex flex-column mt-4">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button">Details</button>
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button">
+                      Add to wishlist
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<section style="padding: 120px !important;">
+<div class="container">
+  <div class="row">
+    <div class="col-xl-8">
+
+      <div id="no-prod" class="card border shadow-none" hidden="hidden">
+        <div class="card-body">
+          <div class="d-flex align-items-start border-bottom pb-3">
+            <div class="flex-grow-1 align-self-center overflow-hidden">
+              <div class="align-items-center justify-content-center">
+                <h5 class="text-truncate font-size-18 text-center" style="margin: 100px 0;">카트에 담긴 상품이 없습니다.</h5>
+              </div>
+            </div>
+            <div class="flex-shrink-0 ms-1">
+              <ul class="list-inline mb-0 font-size-16">
+                <li class="list-inline-item">
+                  <a href="#" class="text-muted px-1">
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+            </div>
+          </div>
+        </div>
+      </div>
+      <th:block th:each="product : ${products}">
+      <div th:id="${'prod'+product.getId()}" class="card border shadow-none" hidden="hidden">
+        <div class="card-body">
+
+          <div class="d-flex align-items-start border-bottom pb-3">
+            <div><input th:id="${'check'+product.getId()}" class="form-check-input me-1" type="checkbox" value="" aria-label="..." checked></div>
+            <div class="me-4">
+              <img src="/assets/img/cherry/cherry14.jpeg" alt="" class="avatar-lg rounded">
+            </div>
+            <div class="flex-grow-1 align-self-center overflow-hidden">
+              <div>
+                <h5 class="text-truncate font-size-18"><a href="#" class="text-dark" th:text="${product.getName()}"></a></h5>
+                <p class="text-muted mb-0">
+                  <i class="bx bxs-star text-warning"></i>
+                  <i class="bx bxs-star text-warning"></i>
+                  <i class="bx bxs-star text-warning"></i>
+                  <i class="bx bxs-star text-warning"></i>
+                  <i class="bx bxs-star text-warning"></i>
+                </p>
+              </div>
+            </div>
+            <div class="flex-shrink-0 ms-1">
+              <ul class="list-inline mb-0 font-size-16">
+                <li th:id="${'delete' + product.getId()}" class="list-inline-item">
+                  <a class="text-muted px-1">
+                    <i class="mdi mdi-trash-can-outline"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mt-3">
+                  <p class="text-muted mb-2">가격</p>
+                  <h5 class="mb-0 mt-2"><span class="text-muted me-2"><del class="font-size-16 fw-normal" th:text="${product.getPrice() + '원'}"></del></span>
+                    <th:block th:text="${#numbers.formatInteger(product.price/100 * (100 - product.sale), 3, 'COMMA') + '원'}"></th:block></h5>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="mt-3">
+                  <p class="text-muted mb-2">수량</p>
+                  <div class="d-inline-flex">
+                    <div style="display: flex; width: 100px;" class="text-center">
+                      <div th:id="${'minus' + product.getId()}" style="width: 33%; border: 1px solid black; cursor: pointer">-</div>
+                      <div th:id="${'product-count' + product.getId()}" style="width: 34%; border: 1px solid black;"></div>
+                      <div th:id="${'plus' + product.getId()}" style="width: 33%; border: 1px solid black; cursor: pointer">+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mt-3">
+                  <p class="text-muted mb-2">총합</p>
+                  <h5 th:id="${'price' + product.getId()}"></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </th:block>
+
+      <div class="row my-4">
+        <div class="col-sm-6">
+        </div> <!-- end col -->
+        <div class="col-sm-6">
+          <div class="text-sm-end mt-2 mt-sm-0">
+            <a id="buy" class="btn btn-success">
+              <i class="mdi mdi-cart-outline me-1"></i> 구매 </a>
+          </div>
+        </div> <!-- end col -->
+      </div> <!-- end row-->
+    </div>
+
+    <div class="col-xl-4">
+      <div class="mt-5 mt-lg-0">
+        <div class="card border shadow-none">
+          <div class="card-header bg-transparent border-bottom py-3 px-4">
+            <h5 class="font-size-16 mb-0">결제 확인</h5>
+          </div>
+          <div class="card-body p-4 pt-2">
+
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <tbody>
+                <tr>
+                  <td>총 금액 :</td>
+                  <td id="pojo-price" class="text-end"></td>
+                </tr>
+                <tr>
+                  <td>할인 금액 : </td>
+                  <td id="sale-price" class="text-end"></td>
+                </tr>
+                <tr class="bg-light">
+                  <th>최종 결제 금액 :</th>
+                  <td class="text-end">
+                    <span id="total-price" class="fw-bold">
+
+                    </span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- end table-responsive -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>
+</section>
+
+<div class="modal fade" id="anno-modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">비회원 구매</h5>
+          <button id="anno-modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">×
+          </button>
+        </div>
+        <div style="padding:50px">
+          <form id="order-data" class="align-items-center">
+            <div class="group wd-50">
+              <label for="anno-user" class="label">주문자명</label>
+              <input id="anno-user" type="text" class="form-control" maxlength="10">
+            </div>
+            <div class="mb-3" style="margin-top: 10px">
+              <label for="address">주소</label>
+              <div style="display: flex">
+                <div  class="w-25">
+                  <input type="text" id="postcode" placeholder="우편번호" name="postCode" class="form-control" required disabled>
+                  <div class="invalid-feedback">
+                    우편번호를 확인해 주세요.
+                  </div>
+                </div>
+                <button id="findPost" type="button" class="btn btn-sm" style="border: 1px solid gray; margin-left: 5px">
+                  우편번호 찾기
+                </button>
+              </div>
+              <div class="modal-address" id="modal-address" style="position:relative; width: 100%; left: -10px">
+                <div id="popup-wrap">
+                  <!-- 우편번호 API가 띄워질 공간 -->
+                </div>
+              </div>
+              <input type="text" id="address" placeholder="주소" class="form-control col-xs-4" required disabled>
+              <div class="invalid-feedback">
+                주소를 확인해주세요.
+              </div>
+              <input type="text" id="detailAddress" placeholder="상세주소" class="form-control col-xs-4">
+              <input type="hidden" id="full-address" name="address">
+            </div>
+            <div id="phone-group" class="mb-3" style="margin-top: 10px">
+              <label for="phone">휴대폰 번호</label>
+              <div style="display: flex">
+                <div class="">
+                  <input type="text" id="phone" name="phoneNumber" class="form-control"
+                         value="" style="text-align:center;" maxlength="13"
+                         placeholder="000-0000-0000"
+                         pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required/>
+                </div>
+                <button id="authBtn" type="button" class="btn btn-sm"
+                        style="border: 1px solid gray; margin-left: 5px">전송
+                </button>
+              </div>
+              <div style="display:flex;">
+                <input type="text" id="typingcode" class="form-control w-25" name="typingcode"
+                       value="" hidden="hidden" required>
+                <span id="time_count"></span>
+              </div>
+              <span id="phone-validate" style="color: red"></span>
+            </div>
+            <div class="group float-end">
+              <button id="anno-buy" class="btn btn-success">구매하기</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://pay.nicepay.co.kr/v1/js/"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script th:inline="text">
+  const pojoPrice1 = [[${products.get(0).getPrice()}]];
+  const sale1 = [[${products.get(0).getSale()}]]
+  const price1 = pojoPrice1 / 100 * (100 - sale1);
+  const pojoPrice2 = [[${products.get(1).getPrice()}]];
+  const sale2 = [[${products.get(1).getSale()}]]
+  const price2 = pojoPrice2 / 100 * (100 - sale2);
+
+  init()
+  function init() {
+    const product1 = window.localStorage.getItem("orchard-product1");
+    const product2 = window.localStorage.getItem("orchard-product2");
+
+    let pojoTotal = 0;
+    let saleTotal = 0;
+    if(!isEmpty(product1) && parseInt(product1) > 0) {
+      $('#prod1').attr('hidden', false)
+      $('#product-count1').text(product1)
+      let price = parseInt(product1) * price1;
+      $('#price1').text(price.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원")
+      if($('#check1').is(':checked')) {
+        pojoTotal += pojoPrice1 * parseInt(product1);
+        saleTotal += pojoPrice1 / 100 * sale1 * parseInt(product1);
+      }
+    }
+
+    if(!isEmpty(product2) && parseInt(product2) > 0) {
+      $('#prod2').attr('hidden', false)
+      $('#product-count2').text(product2)
+      let price = parseInt(product2) * price2;
+      $('#price2').text(price.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원")
+      if($('#check2').is(':checked')) {
+        pojoTotal += + pojoPrice2 * parseInt(product2);
+        saleTotal += pojoPrice2 / 100 * sale2 * parseInt(product2)
+      }
+    }
+
+    if(isEmpty(product1) && isEmpty(product2)) {
+      $('#no-prod').attr('hidden', false);
+      $('#pojo-price').text("0원");
+      $('#sale-price').text("0원");
+      $('#total-price').text("0원");
+
+    } else {
+      $('#pojo-price').text(pojoTotal.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원");
+      $('#sale-price').text("-" + saleTotal.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원");
+
+      let total = pojoTotal - saleTotal;
+      if(total <= 70000 && total > 0) {
+        total += 3500
+        $('#total-price').html(total.toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원 <div>(택배 3,500원 부가)</div>")
+      } else {
+        $('#total-price').text(total.toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원")
+      }
+    }
+  }
+
+  $('#plus1').on('click', () => {
+    const $count = $('#product-count1')
+    const product1 = window.localStorage.getItem('orchard-product1')
+    const count = parseInt(product1);
+    $count.text(count + 1);
+
+    let price = price1 * (count+1);
+    const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원";
+    $('#price1').text(cn1)
+
+    window.localStorage.setItem('orchard-product1', count + 1);
+    total();
+  })
+
+  $('#minus1').on('click', () => {
+    const $count = $('#product-count1')
+    const product1 = window.localStorage.getItem('orchard-product1')
+    const count = parseInt(product1);
+    if(count === 1) {
+      return;
+    }
+    $count.text(count - 1);
+
+    let price = price1 * (count-1);
+    const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원";
+    $('#price1').text(cn1)
+    window.localStorage.setItem('orchard-product1', count - 1);
+    total();
+  })
+
+  $('#plus2').on('click', () => {
+    const $count = $('#product-count2')
+    const product2 = window.localStorage.getItem('orchard-product2')
+    const count = parseInt(product2);
+    $count.text(count + 1);
+
+    let price = price2 * (count+1);
+    const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원";
+    $('#price2').text(cn1)
+    window.localStorage.setItem('orchard-product2', count + 1);
+    total();
+  })
+
+  $('#minus2').on('click', () => {
+    const $count = $('#product-count2')
+    const product2 = window.localStorage.getItem('orchard-product2')
+    const count = parseInt(product2)
+    if(count === 1) {
+      return;
+    }
+    $count.text(count - 1);
+
+    let price = price2 * (count-1);
+    const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원";
+    $('#price2').text(cn1)
+    window.localStorage.setItem('orchard-product2', count - 1);
+    total();
+  })
+
+  $('#delete1').on('click', () => {
+    $('#prod1').remove();
+    window.localStorage.removeItem('orchard-product1');
+    const product2 = window.localStorage.getItem("orchard-product2");
+    if(isEmpty(product2)) {
+      $('#no-prod').attr('hidden', false);
+    }
+    total();
+  })
+
+  $('#delete2').on('click', () => {
+    $('#prod2').remove();
+    window.localStorage.removeItem('orchard-product2');
+    const product1 = window.localStorage.getItem("orchard-product1");
+    if(isEmpty(product1)) {
+      $('#no-prod').attr('hidden', false);
+    }
+    total();
+  })
+
+  $('#check1').on('change', () => {
+    total();
+  })
+
+  $('#check2').on('change', () => {
+    total();
+  })
+
+  function total() {
+    let product1 = "0";
+    let product2 = "0";
+    if($('#check1').is(':checked')) {
+      product1 = window.localStorage.getItem("orchard-product1");
+    }
+    if($('#check2').is(':checked')) {
+      product2 = window.localStorage.getItem("orchard-product2");
+    }
+    let pojoTotal = 0;
+    let saleTotal = 0;
+    if(!isEmpty(product1) && parseInt(product1) > 0){
+      pojoTotal += pojoPrice1 * parseInt(product1);
+      saleTotal += pojoPrice1 / 100 * sale1 * parseInt(product1);
+    }
+
+    if(!isEmpty(product2) && parseInt(product2) > 0) {
+      pojoTotal += + pojoPrice2 * parseInt(product2);
+      saleTotal += pojoPrice2 / 100 * sale2 * parseInt(product2)
+    }
+    if(isEmpty(product1) && isEmpty(product2)) {
+      $('#pojo-price').text("0원");
+      $('#sale-price').text("0원");
+      $('#total-price').text("0원");
+    } else {
+      $('#pojo-price').text(pojoTotal.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원");
+      $('#sale-price').text("-" + saleTotal.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원");
+
+      let total = pojoTotal - saleTotal;
+      if(total <= 70000 && total > 0) {
+        total += 3500
+        $('#total-price').html(total.toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원 <div>(택배 3,500원 부가)</div>")
+      } else {
+        $('#total-price').text(total.toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원")
+      }
+    }
+  }
+
+  function order(name, phone, address) {
+    let count = "";
+    let productId = "";
+
+    if($('#check1').is(':checked')) {
+      count += window.localStorage.getItem("orchard-product1");
+      productId += [[${products.get(0).getId()}]];
+    }
+
+    if($('#check2').is(':checked')) {
+      if(!isEmpty(count)) {
+        count += ","
+      }
+      count += window.localStorage.getItem("orchard-product2");
+      if(!isEmpty(productId)) {
+        productId += ","
+      }
+      productId += [[${products.get(1).getId()}]]
+    }
+    const json = {
+      "productId" : productId,
+      "count" : count
+    }
+
+    if(!isEmpty(name)) {
+      json["userName"] = name;
+    }
+
+    if(!isEmpty(phone)) {
+      json["phoneNumber"] = phone;
+    }
+
+    if(!isEmpty(address)) {
+      json["address"] = address;
+    }
+
+    $.post({
+      url: "/api/v1/order/id",
+      contentType: 'application/json; charset=utf-8',
+      headers:{'Authorization': "Bearer "+accessToken},
+      data: JSON.stringify(json)
+    }).done((data) => {
+
+      let amount;
+      let goodsName;
+
+      if(data.length == 2) {
+        amount = parseInt(data[0].product.price) / 100 * (100 - parseInt(data[0].product.sale)) * parseInt(data[0].count)
+                + parseInt(data[1].product.price) / 100 * (100 - parseInt(data[1].product.sale)) * parseInt(data[1].count)
+        goodsName = `${data[0].product.name}[${data[0].product.count}], ${data[1].product.name}[${data[1].product.count}]`
+      }
+
+
+      AUTHNICE.requestPay({
+        clientId: data[0].clientId,
+        method: 'card',
+        orderId: data[0].orderId,
+        amount: amount,
+        goodsName: goodsName,
+        returnUrl: data[0].host+'/serverAuth',
+        fnError: function (result) {
+          alert('개발자확인용 : ' + result.errorMsg + '')
+        }
+      });
+    })
+  }
+
+  $('#anno-buy').on('click', function(e) {
+    const name = $("#anno-user").val();
+    const phone = $("#phone").val();
+    const address = $('#address').val();
+    const detail = $('#detailAddress').val();
+    let fullAddress;
+
+    if (isEmpty(detail)) {
+      fullAddress = address;
+    } else {
+      fullAddress = address + " " + detail;
+    }
+
+    e.preventDefault();
+    const form = $('#validation-form')
+    form.addClass('was-validated');
+
+    const code = $('#typingcode').val();
+    if(isEmpty(code)) {
+      return;
+    }
+    $.post({
+      url: "/api/v1/auth/code",
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({
+        "number": phone,
+        "code": code
+      })
+    }).done((e) => {
+      if (e.code !== "200") {
+        alert(e.msg)
+        $('#typingcode').focus();
+        return;
+      }
+      order(name, phone, fullAddress);
+    })
+  })
+
+
+
+  $('#buy').on('click', () => {
+
+    if(isEmpty(accessToken)) {
+      $('#anno-modal').modal("show");
+      return;
+    }
+    order("", "", "");
+  })
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("phone").addEventListener("keyup", function(event) {
+      inputPhoneNumber(event);
+    });
+  });
+
+  function inputPhoneNumber(event) {
+    const phone = event.target;
+    if( event.keyCode !== 8 ) {
+      const regExp = new RegExp( /^[0-1]{3}-^[0-9]{4}-^[0-9]{4}/g );
+      if( phone.value.replace( regExp, "").length !== 0 ) {
+        if( checkPhoneNumber( phone.value ) === true ) {
+          let number = phone.value.replace( /[^0-9]/g, "" );
+          let tel = "";
+          let seoul = 0;
+          if( number.substring( 0, 2 ).indexOf( "02" ) === 0 ) {
+            seoul = 1;
+            phone.setAttribute("maxlength", "12");
+            console.log( phone );
+          } else {
+            phone.setAttribute("maxlength", "13");
+          }
+          if( number.length < ( 4 - seoul) ) {
+            return number;
+          } else if( number.length < ( 7 - seoul ) ) {
+            tel += number.substr( 0, (3 - seoul ) );
+            tel += "-";
+            tel += number.substr( 3 - seoul );
+          } else if(number.length < ( 11 - seoul ) ) {
+            tel += number.substr( 0, ( 3 - seoul ) );
+            tel += "-";
+            tel += number.substr( ( 3 - seoul ), 3 );
+            tel += "-";
+            tel += number.substr( 6 - seoul );
+          } else {
+            tel += number.substr( 0, ( 3 - seoul ) );
+            tel += "-";
+            tel += number.substr( ( 3 - seoul), 4 );
+            tel += "-";
+            tel += number.substr( 7 - seoul );
+          }
+          phone.value = tel;
+        } else {
+          const regExp = new RegExp( /[^0-9|^-]*$/ );
+          phone.value = phone.value.replace(regExp, "");
+        }
+      }
+    }
+  }
+
+  function checkPhoneNumber( number ) {
+    const regExp = new RegExp( /^[0-9|-]*$/ );
+    if( regExp.test( number ) === true ) { return true; }
+    else { return false; }
+  }
+
+  $('#authBtn').on('click', () => {
+
+    const regExp = new RegExp( /[0-1]{3}-[0-9]{4}-[0-9]{4}/g );
+    if( regExp.test( $("#phone").val() ) === false ) {
+      $('#phone-validate').text("번호 형식을 확인해 주세요.")
+      return;
+    }
+    $('#phone-validate').text("")
+
+    $.post({
+      url: "/api/v1/auth/phone",
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({ "number" : $('#phone').val() })
+    }).done((data) => {
+      if(data.code === "200") {
+        doTimer();
+      } else {
+        alert(data.msg);
+      }
+    })
+  })
+
+  let intervalVar = undefined;
+  let timeSecond = undefined;
+
+  function doTimer() {	// 인증번호 전송 버튼을 클릭!
+    const auth_btn = document.getElementById("authBtn");
+    auth_btn.disabled = true;
+    auth_btn.value = "재전송";	// 인증번호 전송 버튼 text가 '재전송'으로 바뀜.// 인증번호 입력란에 해당 임시코드가 노출된다.
+    timeSecond = 180;	// 타이머 3분
+    document.getElementById('time_count').innerText = getTimeString(timeSecond);	// 타이머 입력창에 시간이 노출된다.
+    document.getElementById("typingcode").hidden = false;
+
+    if (intervalVar != undefined) {
+      clearInterval(intervalVar);
+    }
+
+    intervalVar = setInterval(function () {
+      if (timeSecond != 0) {
+        timeSecond = timeSecond - 1;
+        document.getElementById('time_count').innerText = getTimeString(timeSecond);	// 0초가 아니라면 1초씩 감소 되면서 타이머 입력창에 보여진다.
+      } else {
+        clearInterval(intervalVar);
+        intervalVar = false;	// 그 외 동작은 clearInterval 메소드로 인해 시간이 멈춘다.
+      }
+      if(timeSecond < 120) {
+        auth_btn.disabled = false;
+      }
+
+      if (timeSecond == -1 || intervalVar == false) {
+        document.getElementById('time_count').innerText = ""
+      }
+    }, 1000);	// 180초에서 1000ms초 간격으로 시간이 흐른다.
+  }
+
+  function getTimeString(second) {	// 타이머 계산법
+    let minute = '' + (Math.floor(second / 60));	// 1분
+    let dividedSec = second % 60;	//  60초
+    if (dividedSec < 10) {	// 만약 10보다 작은 1~9초는 앞에 '0'을 붙인다.
+      dividedSec = '0' + dividedSec;
+    }
+    // ex) 3:00 -> 3분
+    return minute + ":" + dividedSec;
+  }
+
+  $('#anno-modal-close').on('click', () => {
+    $('form').each(function () {
+      this.reset();
+    })
+    $('#anno-modal').modal('hide');
+  })
+
+  const element_wrap = document.getElementById('popup-wrap');
+  const address_modal = document.getElementById('modal-address');
+  $('#findPost').on('click', () => {
+    // 현재 scroll 위치를 저장해놓는다.
+    const currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
+    new daum.Postcode({
+      oncomplete: function(data) {
+        // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+        // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+        // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+        let addr = ''; // 주소 변수
+        let extraAddr = ''; // 참고항목 변수
+
+        //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+          addr = data.roadAddress;
+        } else { // 사용자가 지번 주소를 선택했을 경우(J)
+          addr = data.jibunAddress;
+        }
+
+        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+        if(data.userSelectedType === 'R'){
+          // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+          // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+          if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+            extraAddr += data.bname;
+          }
+          // 건물명이 있고, 공동주택일 경우 추가한다.
+          if(data.buildingName !== '' && data.apartment === 'Y'){
+            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+          }
+          // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+          if(extraAddr !== ''){
+            extraAddr = ' (' + extraAddr + ')';
+          }
+
+          // console.log(extraAddr);
+          // 조합된 참고항목을 해당 필드에 넣는다.
+          // document.getElementById("sample3_extraAddress").value = extraAddr;
+
+        } else {
+          // document.getElementById("sample3_extraAddress").value = '';
+        }
+
+        // 우편번호와 주소 정보를 해당 필드에 넣는다.
+        document.getElementById('postcode').value = data.zonecode;
+        document.getElementById("address").value = addr;
+        // 커서를 상세주소 필드로 이동한다.
+        document.getElementById("detailAddress").focus();
+
+        // iframe을 넣은 element를 안보이게 한다.
+        // (autoClose:false 기능을 이용한다면, 아래 코드를 제거해야 화면에서 사라지지 않는다.)
+        element_wrap.style.display = 'none';
+        address_modal.style.display = 'none';
+
+        // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
+        document.body.scrollTop = currentScroll;
+      },
+      // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
+      onresize : function(size) {
+        element_wrap.style.height = size.height+'px';
+      },
+      width : '100%',
+      height : '100%'
+    }).embed(element_wrap);
+
+    // iframe을 넣은 element를 보이게 한다.
+    element_wrap.style.display = 'block';
+    address_modal.style.display = 'block';
+  })
+</script>

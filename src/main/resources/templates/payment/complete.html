@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layout/layout}"
+      layout:fragment="Content">
+<style>
+  body {
+    min-height: 100vh;
+
+    background: -webkit-gradient(linear, left bottom, right top, from(#92b5db), to(#1d466c));
+    background: -webkit-linear-gradient(bottom left, #92b5db 0%, #1d466c 100%);
+    background: -moz-linear-gradient(bottom left, #92b5db 0%, #1d466c 100%);
+    background: -o-linear-gradient(bottom left, #92b5db 0%, #1d466c 100%);
+    background: linear-gradient(to top right, #92b5db 0%, #1d466c 100%);
+  }
+
+  .input-form {
+    max-width: 680px;
+
+    margin-top: 80px;
+    padding: 32px;
+
+    background: #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15)
+  }
+</style>
+
+<body>
+<div class="container">
+  <div class="input-form-backgroud row">
+    <div class="input-form col-md-12 mx-auto justify-content-center" style="margin-top: 18%; margin-bottom: 18%;">
+      <h4 class="mb-3 text-center">결제 완료 되셨습니다.</h4>
+      <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-md-12">
+            <div class="card-body">
+              <h4 class="card-title text-center">결제 완료</h4>
+              <p class="card-text">상품 :
+<!--                <th:block th:each="order : ${orders}">-->
+                  <span th:each="order : ${orders}" th:text="${order.getProduct().getName()}"></span><span th:if="${order.last}">,</span>
+<!--                </th:block>-->
+              </p>
+              <p class="card-text">주문 번호 : <span th:text="${orders.getOrderId()}"></span></p>
+              <p class="card-text">주소 : <span th:text="${orders.getAddress().userAddress()}"></span></p>
+              <p class="card-text">전화 번호 : <span th:text="${orders.getPhoneNumber().userPhoneNumber()}"></span></p>
+              <p class="card-text">영수증 : <a th:href="${orders.getReceiptUrl()}">클릭</a></p>
+              <a href="/" class="btn btn-primary">홈으로</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="my-3 text-center text-small">
+  </footer>
+</div>

@@ -32,8 +32,9 @@ jwt:
   refreshToken-validity-in-seconds: 1209600
 
 nice:
-  client-id: R2_4177c272c6b746e8aba9d652b6f072b1
-  secret-key: f0d2609ee0da4f99923ace4723142983
+  return-host: http://localhost:8080
+  client-id: S2_73cd46ca986a446fa9be3aa0debd4e1e
+  secret-key: 695f3943656941bfb185f6879638d81f
 
 ncp:
   from: 01050991560
