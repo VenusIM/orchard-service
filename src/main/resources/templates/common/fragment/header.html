@@ -180,11 +180,13 @@
           <a href="#" class=""><span id="userName"></span>
           <i class="bi dropdown-indicator bi-chevron-down"></i></a>
           <ul style="border: 1px solid var(--color-secondary)">
-<!--            <li id="myPage"><a href="#">마이페이지</a></li>-->
+            <li id="my-info"><a href="#">내 정보 조회</a></li>
+            <li id="my-page"><a href="#">내 정보 수정</a></li>
+            <li id="order-history"><a href="#">주문 내역</a></li>
             <li id="logout"><a href="#">로그아웃</a></li>
           </ul>
         </li>
-        <li id="cart"><a><i class="fas fa-shopping-cart"></i></a></li>
+        <li id="cart"><a href="#"><i class="fas fa-shopping-cart"></i></a></li>
         <!--<li><a href="https://www.instagram.com/kk_ing_cherry/?next=%2F">인스타그램<i class="bi bi-instagram d-flex ms-4"></i></a></li>-->
       </ul>
     </nav>
@@ -229,21 +231,24 @@
                       </form>
                       <div class="hr"></div>
                       <div class="foot-lnk">
-                        <span id="register">회원 가입</span> / <span id="findAccount">계정 찾기</span>
+                        <span id="register">회원 가입</span> <!--/ <span id="findAccount">계정 찾기</span>-->
                       </div>
                     </div>
                     <form id="-data" class="align-items-center">
                       <div class="sign-up-htm">
                         <div class="group">
-                          <label for="user" class="label">주문번호</label>
-                          <input id="user" type="text" class="input">
+                          <label for="login-orderNo" class="label">주문번호</label>
+                          <input id="login-orderNo" type="text" class="input">
                         </div>
                         <div class="group">
-                          <label for="pass" class="label">전화번호</label>
-                          <input id="pass" type="password" class="input" data-type="password">
+                          <label for="login-phone" class="label">전화번호</label>
+                          <input type="text" id="login-phone" name="phoneNumber" class="input"
+                                 value="" style="text-align:center;" maxlength="13"
+                                 placeholder="000-0000-0000"
+                                 pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"/>
                         </div>
                         <div class="group">
-                          <input type="submit" class="button" value="주문조회">
+                          <input id="search" type="submit" class="button" value="주문조회">
                         </div>
                       </div>
                     </form>
@@ -280,6 +285,7 @@
   }
 
   let accessToken;
+  let role;
 
   $(document).ready(function () {
     const kci = window.localStorage.getItem("kci")
@@ -293,11 +299,18 @@
           // headers:{'Authorization': "Bearer "+accessToken}
         }).done((data) => {
           accessToken = data.accessToken;
+          role = data.role
+          if(role === 'ROLE_ADMIN') {
+            $('#nav').append(`<li id="manage"><a href="#">주문관리</a></li>`)
+          }
           setName();
         }).fail(() => {
           anno();
         })
     } else {
+      if(role === 'ROLE_ADMIN') {
+        $('#nav').append(`<li id="manage"><a href="#">주문관리</a></li>`)
+      }
       setName();
     }
   })
@@ -415,4 +428,173 @@
   $("#cart").on('click', () => {
     window.location.href = "/cart/list"
   })
+
+  $('#my-info').on('click', () => {
+    if(!checkUrl()) return;
+    $.get({
+      url:"/member/info",
+      headers:{'Authorization': "Bearer "+accessToken}
+    }).done((data) => {
+      $('#content-body').html(data)
+    }).fail(() => {
+      window.location.href = '/'
+    })
+  })
+
+  $('#my-page').on('click', () => {
+    if(!checkUrl()) return;
+    $.get({
+      url:"/member/update",
+      headers:{'Authorization': "Bearer "+accessToken}
+    }).done((data) => {
+      $('#content-body').html(data)
+    }).fail(() => {
+        window.location.href = '/'
+    })
+  })
+
+  $('#order-history').on('click', () => {
+    if(!checkUrl()) return;
+    $.get({
+      url: "/order/history",
+      headers: {'Authorization': "Bearer " + accessToken}
+    }).done((data) => {
+      $('#content-body').html(data)
+    }).fail(() => {
+      window.location.href = '/'
+    })
+  })
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("login-phone").addEventListener("keyup", function(event) {
+      inputPhoneNumber(event);
+    });
+  });
+
+  function inputPhoneNumber(event) {
+    const phone = event.target;
+    if( event.keyCode !== 8 ) {
+      const regExp = new RegExp( /^[0-1]{3}-^[0-9]{4}-^[0-9]{4}/g );
+      if( phone.value.replace( regExp, "").length !== 0 ) {
+        if( checkPhoneNumber( phone.value ) === true ) {
+          let number = phone.value.replace( /[^0-9]/g, "" );
+          let tel = "";
+          let seoul = 0;
+          if( number.substring( 0, 2 ).indexOf( "02" ) === 0 ) {
+            seoul = 1;
+            phone.setAttribute("maxlength", "12");
+            console.log( phone );
+          } else {
+            phone.setAttribute("maxlength", "13");
+          }
+          if( number.length < ( 4 - seoul) ) {
+            return number;
+          } else if( number.length < ( 7 - seoul ) ) {
+            tel += number.substr( 0, (3 - seoul ) );
+            tel += "-";
+            tel += number.substr( 3 - seoul );
+          } else if(number.length < ( 11 - seoul ) ) {
+            tel += number.substr( 0, ( 3 - seoul ) );
+            tel += "-";
+            tel += number.substr( ( 3 - seoul ), 3 );
+            tel += "-";
+            tel += number.substr( 6 - seoul );
+          } else {
+            tel += number.substr( 0, ( 3 - seoul ) );
+            tel += "-";
+            tel += number.substr( ( 3 - seoul), 4 );
+            tel += "-";
+            tel += number.substr( 7 - seoul );
+          }
+          phone.value = tel;
+        } else {
+          const regExp = new RegExp( /[^0-9|^-]*$/ );
+          phone.value = phone.value.replace(regExp, "");
+        }
+      }
+    }
+  }
+
+  function checkPhoneNumber( number ) {
+    const regExp = new RegExp( /^[0-9|-]*$/ );
+    if( regExp.test( number ) === true ) { return true; }
+    else { return false; }
+  }
+
+  $('#search').on('click', () => {
+    if(!checkUrl()) return;
+    const orderNo = $('#login-orderNo').val()
+    const phone = $('#login-phone').val()
+    if(isEmpty(orderNo)) {
+      alert("주문 번호 입력해 주세요.")
+      $('#login-orderNo').focus();
+      return;
+    }
+
+    if(isEmpty(phone)) {
+      alert("휴대폰 번호를 입력해 주세요.")
+      $('#login-phone').focus();
+      return;
+    }
+    const regExp = new RegExp( /[0-1]{3}-[0-9]{4}-[0-9]{4}/g );
+    if(!regExp.test(phone)) {
+      alert("휴대폰 번호 형식을 확인해 주세요.")
+      $('#login-phone').focus();
+      return;
+    }
+
+    $.post({
+      url: "/api/v1/order/anon/history",
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({
+        "orderNo" : orderNo,
+        "phoneNumber": phone
+      })
+    }).done((data) => {
+      if(data.code === "400") {
+        alert(data.msg);
+        return;
+      }
+      if(data.code === "200") {
+        $.post({
+          url: "/order/history/anon",
+          contentType: 'application/json; charset=utf-8',
+          data: JSON.stringify({
+            "orderId" : orderNo,
+            "phoneNumber": phone
+          })
+        }).done((data) => {
+          $('form').each(function () {
+            this.reset();
+          })
+          $('#loginModal').modal('hide');
+          $('#content-body').html(data);
+        })
+      }
+    })
+  })
+
+  $(document).on('click', '#manage', () => {
+    if(!checkUrl()) return;
+    $.get({
+      url: "/order/history/admin",
+      headers: {'Authorization': "Bearer " + accessToken}
+    }).done((data) => {
+      $('#content-body').html(data)
+    }).fail(() => {
+      window.location.href = '/'
+    })
+  })
+
+  function checkUrl() {
+    const pathName = window.location.pathname;
+    if(pathName.startsWith("/serverAuth") || pathName.startsWith("/cancelAuth")) {
+      if(confirm("현재 페이지에서 접근할 수 없습니다. 메인페에지로 이동하시겠습니까?")) {
+        window.location.href = "/"
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
 </script>

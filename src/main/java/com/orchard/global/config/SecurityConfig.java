@@ -3,6 +3,7 @@ package com.orchard.global.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -32,7 +33,6 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-//    private final CorsFilter corsFilter;
     private final CustomMemberDetailService customMemberDetailService;
 
     @Bean
@@ -63,6 +63,12 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManagerBuilder.build())
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
+                                .requestMatchers(HttpMethod.GET, "/member/update")
+                                .authenticated()
+                                .requestMatchers(HttpMethod.PATCH, "/api/v1/member/update/**", "/api/v1/order/trans")
+                                .authenticated()
+                                .requestMatchers(HttpMethod.GET, "/order/history", "/order/history/admin")
+                                .authenticated()
                                 .anyRequest()
                                 .permitAll()
                 ).sessionManagement(

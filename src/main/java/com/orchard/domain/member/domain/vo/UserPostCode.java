@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class UserPostCode {
 
     @NotBlank(message = "우편 번호는 필수 입력사항 입니다.")
-    @Column(unique = true, nullable = false, length = 200)
+    @Column(nullable = false, length = 200)
     private String postCode;
 
     public static UserPostCode from(final String postCode) {

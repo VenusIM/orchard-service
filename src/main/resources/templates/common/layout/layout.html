@@ -13,8 +13,10 @@
 <!--Header 영역을 참조합니다.-->
 <header th:replace="~{common/fragment/header :: HeaderFragment}"></header>
 
+<div id="content-body">
+    <th:block layout:fragment="Content"></th:block>
+</div>
 <!--Content 내용 영역을 참조합니다-->
-<th:block layout:fragment="Content"></th:block>
 
 <!--Footer 영역을 참조합니다.-->
 <footer th:replace="~{common/fragment/footer :: FooterFragment}"></footer>

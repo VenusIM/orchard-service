@@ -12,6 +12,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @ToString
 public class OrderRequestDto {
 
+    @JsonProperty("orderNo")
+    private String orderNo;
+
     @JsonProperty("phoneNumber")
     private UserPhoneNumber phoneNumber;
 

@@ -8,7 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.orchard.domain.ncp.NcpService;
 import com.orchard.domain.order.application.OrderService;
+import com.orchard.domain.order.domain.persist.Order;
+import com.orchard.domain.order.dto.OrderCompleteDto;
 import com.orchard.domain.order.dto.OrderResponseDto;
+import com.orchard.domain.product.application.ProductService;
+import com.orchard.domain.product.domain.pesist.Product;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -21,30 +25,34 @@ import org.springframework.http.*;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
-@Controller("/payment")
+@Controller
 public class PaymentController {
 
     private WebClient client;
     private final String CLIENT_ID;
     private final String SECRET_KEY;
     private final OrderService orderService;
+    private final ProductService productService;
     private final NcpService ncpService;
+    private final String niceApi;
 
     public PaymentController(@Value("${nice.client-id}") String clientId,
                              @Value("${nice.secret-key}") String secretKey,
+                             @Value("${nice.api}") String niceApi,
                              OrderService orderService,
+                             ProductService productService,
                              NcpService ncpService) {
         this.CLIENT_ID = clientId;
         this.SECRET_KEY = secretKey;
+        this.niceApi = niceApi;
         this.orderService = orderService;
+        this.productService = productService;
         this.ncpService = ncpService;
     }
 
@@ -79,7 +87,7 @@ public class PaymentController {
                                         ).responseTimeout(Duration.ofSeconds(60))
                         )
                 )
-                .baseUrl("https://sandbox-api.nicepay.co.kr")
+                .baseUrl(niceApi)
                 .build();
     }
 
@@ -112,27 +120,52 @@ public class PaymentController {
             model.addAttribute("orders", orderService.update(responseNode));
             return "/payment/complete";
         }
-        return "/payment/error";
+        return "/payment/fail";
     }
 
-    @RequestMapping("/cancelAuth")
-    public String requestCancel(
-            @RequestParam String tid,
-            @RequestParam String amount,
-            Model model) throws Exception {
+    @GetMapping("/cancelAuth/{orderId}")
+    public String requestCancel(@PathVariable String orderId, Model model) throws Exception {
 
-        Map<String, Object> AuthenticationMap = new HashMap<>();
-        AuthenticationMap.put("amount", amount);
-        AuthenticationMap.put("reason", "test");
-        AuthenticationMap.put("orderId", UUID.randomUUID().toString());
+        List<Order> orders = orderService.findOrder(orderId);
+        if(orders.size() < 1) {
+            return "/order/cancel-fail";
+        }
+        int amount = 0;
+        String tid = null;
 
-//        HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(AuthenticationMap), headers);
+        List<OrderResponseDto> orderResponseDtos = new ArrayList<>();
+        for(Order order : orders) {
+            Product product = productService.findById(order.getProductIdx());
+            if(tid == null) {
+               tid = order.getTid();
+            }
+            amount += product.getPrice() / 100 * (100 - product.getSale()) * order.getCount();
 
-        /*JsonNode responseNode = webClient.post()
-                .uri(tid+"/cancel")
-                .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()))
+            OrderResponseDto orderResponseDto = new OrderResponseDto(order);
+            orderResponseDto.setProduct(product);
+            orderResponseDtos.add(orderResponseDto);
+        }
+
+        if(amount < 70000) {
+            amount += 3500;
+        }
+
+        if(tid == null) {
+            return "/order/cancel-fail";
+        }
+
+        String accessToken = getAccessToken();
+
+        Map<String, Object> authenticationMap = new HashMap<>();
+        authenticationMap.put("amount", amount);
+        authenticationMap.put("reason", "회원 요청");
+        authenticationMap.put("orderId", orderId);
+
+        JsonNode responseNode = client.post()
+                .uri("/v1/payments/"+ tid +"/cancel")
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(AuthenticationMap)
+                .bodyValue(authenticationMap)
                 .retrieve()
                 .bodyToMono(JsonNode.class)
                 .block();
@@ -140,15 +173,13 @@ public class PaymentController {
         String resultCode = responseNode.get("resultCode").asText();
         model.addAttribute("resultMsg", responseNode.get("resultMsg").asText());
 
-        System.out.println(responseNode.toPrettyString());
-
         if (resultCode.equalsIgnoreCase("0000")) {
-            // 취소 성공 비즈니스 로직 구현
-        } else {
-            // 취소 실패 비즈니스 로직 구현
-        }*/
+            // 결제 성공 비즈니스 로직 구현
+            model.addAttribute("orders", orderService.delete(responseNode));
+            return "/order/cancel";
+        }
 
-        return "/response";
+        return "/order/cancel-fail";
     }
 
     @RequestMapping("/hook")

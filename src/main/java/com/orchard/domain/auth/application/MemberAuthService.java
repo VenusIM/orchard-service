@@ -74,11 +74,15 @@ public class MemberAuthService {
 
         Authentication authentication = tokenProvider.getAuthentication(refreshToken.refreshToken());
 
+        String role = authentication.getAuthorities().stream()
+                .findFirst().get().getAuthority();
+
         UserDetails principal = (UserDetails) authentication.getPrincipal();
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         TokenDTO tokenDTO = tokenProvider.createToken(principal.getUsername(), authentication);
         tokenDTO.setOriginRefreshToken(refreshToken);
+        tokenDTO.setRole(role);
 
         return tokenDTO;
     }

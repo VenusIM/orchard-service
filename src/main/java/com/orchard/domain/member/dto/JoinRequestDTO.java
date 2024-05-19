@@ -26,9 +26,12 @@ public class JoinRequestDTO {
 
     private String email;
     private String password;
+    @JsonProperty("name")
     private String name;
     private String phoneNumber;
+    @JsonProperty("postCode")
     private String postCode;
+    @JsonProperty("address")
     private String address;
 
     public Member toEntity() {

@@ -77,6 +77,18 @@ public class MemberManagementController {
         return ResponseEntity.ok(memberManagementService.searchMember(UserName.from(name), pageable));
     }
 
+    @PatchMapping("/update/name")
+    public ResponseEntity<String> updateName(@RequestBody JoinRequestDTO joinRequestDTO) {
+        memberManagementService.updateName(joinRequestDTO);
+        return ResponseEntity.ok("이름이 수정 되었습니다.");
+    }
+
+    @PatchMapping("/update/address")
+    public ResponseEntity<String> updateAddress(@RequestBody JoinRequestDTO joinRequestDTO) {
+        memberManagementService.updateAddress(joinRequestDTO);
+        return ResponseEntity.ok("주소가 수정 되었습니다.");
+    }
+
     private String getEmail() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }

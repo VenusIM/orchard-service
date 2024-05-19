@@ -237,15 +237,24 @@
             headers:{'Authorization': "Bearer "+accessToken},
             data: JSON.stringify(json)
         }).done((data) => {
+            data = data[0]
             AUTHNICE.requestPay({
                 clientId: data.clientId,
                 method: 'card',
-                orderId: data.orderId,
+                orderId: data.orderNo,
                 amount: parseInt(data.product.price) / 100 * (100 - parseInt(data.product.sale)) * parseInt(data.count),
-                goodsName: data.product.name,
+                goodsName: `${data.product.name} [${data.count}개]`,
                 returnUrl: data.host+'/serverAuth',
                 fnError: function (result) {
-                    alert('개발자확인용 : ' + result.errorMsg + '')
+                    $.ajax({
+                        url: "/api/v1/order/id",
+                        method: "delete",
+                        contentType: 'application/json; charset=utf-8',
+                        headers:{'Authorization': "Bearer "+accessToken},
+                        data: JSON.stringify({orderNo: data.orderNo})
+                    }).done(() => {
+                        window.location.href = window.location.pathname;
+                    })
                 }
             });
         })

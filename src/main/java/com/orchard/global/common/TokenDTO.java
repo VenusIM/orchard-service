@@ -17,11 +17,23 @@ public class TokenDTO {
     @JsonProperty("refreshToken")
     private RefreshToken refreshToken;
 
+    @JsonProperty("role")
+    private String role;
+
+    public TokenDTO(AccessToken accessToken, RefreshToken refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
+
     public static TokenDTO create(final AccessToken accessToken, final RefreshToken refreshToken) {
         return new TokenDTO(accessToken, refreshToken);
     }
 
     public void setOriginRefreshToken(RefreshToken refreshToken) {
         this.refreshToken =  refreshToken;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

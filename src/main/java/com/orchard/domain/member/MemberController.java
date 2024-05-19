@@ -1,9 +1,11 @@
 package com.orchard.domain.member;
 
 import com.orchard.domain.member.application.MemberManagementService;
+import com.orchard.domain.member.domain.vo.UserEmail;
 import com.orchard.domain.member.dto.JoinRequestDTO;
 import com.orchard.domain.member.dto.JoinResponseDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,4 +38,15 @@ public class MemberController {
         return "member/find";
     }
 
+    @GetMapping("/update")
+    public String update() {
+        return "/member/profile-update";
+    }
+
+    @GetMapping("/info")
+    public String info(Model model) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        model.addAttribute("user", memberManagementService.findOne(UserEmail.from(email)));
+        return "/member/info";
+    }
 }

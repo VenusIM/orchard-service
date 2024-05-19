@@ -17,7 +17,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
@@ -72,21 +72,23 @@ public class Member extends BaseTimeEntity {
         return this;
     }
 
-    private void changePostCode(UserPostCode postCode) {
+    public void changePostCode(UserPostCode postCode) {
         this.postCode = postCode;
     }
 
-    private void changeEmail(UserEmail email) {
+    public void changeEmail(UserEmail email) {
         this.email = email;
     }
 
-    private void changePassword(UserPassword password) {
+    public void changePassword(UserPassword password) {
         this.password = password;
     }
 
-    private void changePhoneNumber(UserPhoneNumber phoneNumber) { this.phoneNumber = phoneNumber; }
+    public void changePhoneNumber(UserPhoneNumber phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    private void changeAddress(UserAddress address) { this.address = address; }
+    public void changeAddress(UserAddress address) { this.address = address; }
+
+    public void changeName(UserName name) { this.name = name; }
 
     // 비밀번호 해시화
     public Member encode(final PasswordEncoder encoder) {

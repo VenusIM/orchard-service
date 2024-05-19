@@ -624,6 +624,7 @@
     if($('#check1').is(':checked')) {
       count += window.localStorage.getItem("orchard-product1");
       productId += [[${products.get(0).getId()}]];
+      window.localStorage.removeItem("orchard-product1");
     }
 
     if($('#check2').is(':checked')) {
@@ -635,6 +636,7 @@
         productId += ","
       }
       productId += [[${products.get(1).getId()}]]
+      window.localStorage.removeItem("orchard-product2");
     }
     const json = {
       "productId" : productId,
@@ -660,25 +662,40 @@
       data: JSON.stringify(json)
     }).done((data) => {
 
-      let amount;
-      let goodsName;
+      let amount=  parseInt(data[0].product.price) / 100 * (100 - parseInt(data[0].product.sale)) * parseInt(data[0].count)
+      let goodsName =`${data[0].product.name}[${data[0].count}개]`
 
       if(data.length == 2) {
-        amount = parseInt(data[0].product.price) / 100 * (100 - parseInt(data[0].product.sale)) * parseInt(data[0].count)
-                + parseInt(data[1].product.price) / 100 * (100 - parseInt(data[1].product.sale)) * parseInt(data[1].count)
-        goodsName = `${data[0].product.name}[${data[0].product.count}], ${data[1].product.name}[${data[1].product.count}]`
+        amount += parseInt(data[1].product.price) / 100 * (100 - parseInt(data[1].product.sale)) * parseInt(data[1].count)
+        goodsName += `, ${data[1].product.name}[${data[1].count}개]`
       }
-
 
       AUTHNICE.requestPay({
         clientId: data[0].clientId,
         method: 'card',
-        orderId: data[0].orderId,
+        orderId: data[0].orderNo,
         amount: amount,
         goodsName: goodsName,
         returnUrl: data[0].host+'/serverAuth',
         fnError: function (result) {
-          alert('개발자확인용 : ' + result.errorMsg + '')
+
+          if(!isEmpty($('#check1')) && $('#check1').is(':checked')) {
+              window.localStorage.setItem("orchard-product1", data[0].count);
+          }
+
+          if(!isEmpty($('#check2')) && $('#check2').is(':checked')) {
+              window.localStorage.setItem("orchard-product2", data[1].count);
+          }
+
+          $.ajax({
+            url: "/api/v1/order/id",
+            method: "delete",
+            contentType: 'application/json; charset=utf-8',
+            headers:{'Authorization': "Bearer "+accessToken},
+            data: JSON.stringify({orderNo: data.orderNo})
+          }).done(() => {
+            window.location.href = window.location.pathname;
+          })
         }
       });
     })

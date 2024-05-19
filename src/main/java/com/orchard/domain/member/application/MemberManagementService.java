@@ -1,5 +1,6 @@
 package com.orchard.domain.member.application;
 
+import com.orchard.domain.member.dto.JoinRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -99,5 +100,26 @@ public class MemberManagementService {
         return members.stream()
                 .map(FindAllResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    public Member updateName(JoinRequestDTO joinRequestDTO) {
+        Member member = getMember();
+        member.changeName(joinRequestDTO.toEntity().getName());
+        return memberRepository.save(member);
+    }
+
+    public Member updateAddress(JoinRequestDTO joinRequestDTO) {
+        Member member = getMember();
+        Member request = joinRequestDTO.toEntity();
+        member.changePostCode(request.getPostCode());
+        member.changeAddress(request.getAddress());
+        return memberRepository.save(member);
+    }
+
+    private Member getMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return memberRepository.findByEmail(UserEmail.from(email)).orElseThrow(() ->
+                new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
     }
 }

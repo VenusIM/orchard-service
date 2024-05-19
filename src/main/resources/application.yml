@@ -32,6 +32,7 @@ jwt:
   refreshToken-validity-in-seconds: 1209600
 
 nice:
+  api: https://sandbox-api.nicepay.co.kr
   return-host: http://localhost:8080
   client-id: S2_73cd46ca986a446fa9be3aa0debd4e1e
   secret-key: 695f3943656941bfb185f6879638d81f

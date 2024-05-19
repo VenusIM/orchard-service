@@ -40,10 +40,9 @@
         <div class="row g-0">
           <div class="col-md-12">
             <div class="card-body">
-              <h4 class="card-title text-center">결제 완료</h4>
               <p class="card-text">상품 :
 <!--                <th:block th:each="order : ${orders}">-->
-                  <span th:each="order : ${orders}" th:text="${order.getProduct().getName()}"></span><span th:if="${order.last}">,</span>
+                  <span th:each="order, iterStat : ${orders.getOrders()}" th:text="${iterStat.last} ? ${order.getProduct().getName()} + '[' + ${order.getCount()} + '개]' : ${order.getProduct().getName()} + '[' + ${order.getCount()} + '개]' + ',' "></span>
 <!--                </th:block>-->
               </p>
               <p class="card-text">주문 번호 : <span th:text="${orders.getOrderId()}"></span></p>

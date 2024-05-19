@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Table(name = "orders",indexes = {
@@ -51,6 +53,10 @@ public class Order extends BaseTimeEntity {
 
     private String signature;
 
+    private String transNo;
+
+    private String transCompany;
+
     @Builder
     public Order(String orderNo, Long memberIdx, UserName userName, UserPhoneNumber userPhoneNumber, UserAddress userAddress, String status, Long productIdx, Integer count) {
         this.orderNo = orderNo;
@@ -68,5 +74,19 @@ public class Order extends BaseTimeEntity {
         this.status = status;
         this.receiptUrl = receiptUrl;
         this.signature = signature;
+    }
+
+    public void updateTransNo(String transNo, String transCompany) {
+        this.status = "trans";
+        this.transCompany = transCompany;
+        this.transNo = transNo;
+    }
+
+    public void transComplete() {
+        this.status = "complete";
+    }
+
+    public void delete() {
+        recordDeletedTime(LocalDateTime.now());
     }
 }

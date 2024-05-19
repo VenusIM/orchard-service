@@ -27,6 +27,7 @@ public class OrderResponseDto {
         this.orderNo = order.getOrderNo();
         this.memberIdx = order.getMemberIdx();
         this.userName = order.getUserName();
+        this.userAddress = order.getUserAddress();
         this.userPhoneNumber = order.getUserPhoneNumber();
         this.status = order.getStatus();
         this.count = order.getCount();

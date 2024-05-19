@@ -22,7 +22,7 @@ import com.orchard.domain.member.domain.persist.Member;
 public class MemberUpdateDTO {
 
     @JsonProperty("email")
-    @ApiModelProperty(example = "golf@gmail.com")
+    @ApiModelProperty(example = "yim3370@gmail.com")
     private UserEmail email;
 
     @JsonProperty("password")
