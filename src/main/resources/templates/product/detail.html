@@ -238,11 +238,15 @@
             data: JSON.stringify(json)
         }).done((data) => {
             data = data[0]
+            let amount = parseInt(data.product.price) / 100 * (100 - parseInt(data.product.sale)) * parseInt(data.count)
+            if(amount < 70000) {
+                amount += 3500;
+            }
             AUTHNICE.requestPay({
                 clientId: data.clientId,
                 method: 'card',
                 orderId: data.orderNo,
-                amount: parseInt(data.product.price) / 100 * (100 - parseInt(data.product.sale)) * parseInt(data.count),
+                amount: amount,
                 goodsName: `${data.product.name} [${data.count}개]`,
                 returnUrl: data.host+'/serverAuth',
                 fnError: function (result) {

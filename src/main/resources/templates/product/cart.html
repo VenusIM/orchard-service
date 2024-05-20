@@ -670,6 +670,10 @@
         goodsName += `, ${data[1].product.name}[${data[1].count}개]`
       }
 
+      if(amount < 70000) {
+        amount += 3500;
+      }
+
       AUTHNICE.requestPay({
         clientId: data[0].clientId,
         method: 'card',
@@ -692,7 +696,7 @@
             method: "delete",
             contentType: 'application/json; charset=utf-8',
             headers:{'Authorization': "Bearer "+accessToken},
-            data: JSON.stringify({orderNo: data.orderNo})
+            data: JSON.stringify({orderNo: data[0].orderNo})
           }).done(() => {
             window.location.href = window.location.pathname;
           })
