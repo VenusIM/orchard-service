@@ -23,14 +23,20 @@ import java.time.LocalDate;
 @Slf4j
 @ApiModel
 public class JoinRequestDTO {
-
+    @JsonProperty("email")
     private String email;
+
     private String password;
+
     @JsonProperty("name")
     private String name;
+
+    @JsonProperty("phone")
     private String phoneNumber;
+
     @JsonProperty("postCode")
     private String postCode;
+
     @JsonProperty("address")
     private String address;
 

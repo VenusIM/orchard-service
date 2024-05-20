@@ -153,6 +153,10 @@
     .foot-lnk{
       text-align:center;
     }
+
+    .user-reg {
+      cursor: pointer;
+    }
   </style>
 </head>
 <!-- Navigation-->
@@ -186,6 +190,14 @@
             <li id="logout"><a href="#">로그아웃</a></li>
           </ul>
         </li>
+        <li id="manager" class="dropdown" hidden="hidden">
+          <a href="#" class="">관리자<i class="bi dropdown-indicator bi-chevron-down"></i></a>
+          <ul style="border: 1px solid var(--color-secondary)">
+            <li id="order-manage"><a href="#">주문 관리</a></li>
+            <li id="trans-manage"><a href="#">배송 관리</a></li>
+            <li id="cancel-history"><a href="#">취소 내역</a></li>
+          </ul>
+        </li>
         <li id="cart"><a href="#"><i class="fas fa-shopping-cart"></i></a></li>
         <!--<li><a href="https://www.instagram.com/kk_ing_cherry/?next=%2F">인스타그램<i class="bi bi-instagram d-flex ms-4"></i></a></li>-->
       </ul>
@@ -211,7 +223,7 @@
                   <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">비회원</label>
                   <div class="login-form">
                     <div class="sign-in-htm">
-                      <form id="login-data" class="align-items-center">
+                      <div id="login-data" class="align-items-center">
                         <div class="group">
                           <label for="email-login" class="label">이메일</label>
                           <input id="email-login" name="userEmail" type="text" class="input">
@@ -228,13 +240,13 @@
                           <input id="login-btn" type="button" class="button" value="로그인">
                         </div>
                         <div id="error" class="group" hidden="hidden"><span style="color:red">이메일, 비밀번호를 확인해 주세요.</span></div>
-                      </form>
+                      </div>
                       <div class="hr"></div>
                       <div class="foot-lnk">
-                        <span id="register">회원 가입</span> <!--/ <span id="findAccount">계정 찾기</span>-->
+                        <span id="register" class="user-reg">회원 가입</span> / <span id="findAccount" class="user-reg">계정 찾기</span>
                       </div>
                     </div>
-                    <form id="-data" class="align-items-center">
+                    <div id="-data" class="align-items-center">
                       <div class="sign-up-htm">
                         <div class="group">
                           <label for="login-orderNo" class="label">주문번호</label>
@@ -251,7 +263,7 @@
                           <input id="search" type="submit" class="button" value="주문조회">
                         </div>
                       </div>
-                    </form>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -264,11 +276,11 @@
 
 <script th:inline="javascript">
 
-  /*function preventRightClick(event) {
+  function preventRightClick(event) {
     event.preventDefault();
   }
   // 우클릭 이벤트를 감지하여 막음
-  document.addEventListener('contextmenu', preventRightClick);*/
+  document.addEventListener('contextmenu', preventRightClick);
 
   function isEmpty(value){
     return value === "" || value === null || value === undefined || (typeof value === "object" && !Object.keys(value).length);
@@ -301,7 +313,7 @@
           accessToken = data.accessToken;
           role = data.role
           if(role === 'ROLE_ADMIN') {
-            $('#nav').append(`<li id="manage"><a href="#">주문관리</a></li>`)
+            $('#manager').attr('hidden', false);
           }
           setName();
         }).fail(() => {
@@ -309,7 +321,7 @@
         })
     } else {
       if(role === 'ROLE_ADMIN') {
-        $('#nav').append(`<li id="manage"><a href="#">주문관리</a></li>`)
+        $('#manager').attr('hidden', false);
       }
       setName();
     }
@@ -574,10 +586,34 @@
     })
   })
 
-  $(document).on('click', '#manage', () => {
+  $(document).on('click', '#order-manage', () => {
     if(!checkUrl()) return;
     $.get({
-      url: "/order/history/admin",
+      url: "/order/history/manage",
+      headers: {'Authorization': "Bearer " + accessToken}
+    }).done((data) => {
+      $('#content-body').html(data)
+    }).fail(() => {
+      window.location.href = '/'
+    })
+  })
+
+  $(document).on('click', '#trans-manage', () => {
+    if(!checkUrl()) return;
+    $.get({
+      url: "/order/history/manage/trans",
+      headers: {'Authorization': "Bearer " + accessToken}
+    }).done((data) => {
+      $('#content-body').html(data)
+    }).fail(() => {
+      window.location.href = '/'
+    })
+  })
+
+  $(document).on('click', '#cancel-history', () => {
+    if(!checkUrl()) return;
+    $.get({
+      url: "/order/history/manage/cancel",
       headers: {'Authorization': "Bearer " + accessToken}
     }).done((data) => {
       $('#content-body').html(data)
@@ -597,4 +633,9 @@
     }
     return true;
   }
+
+  $('#findAccount').on('click', () => {
+      window.location.href = "/member/find"
+  })
+
 </script>

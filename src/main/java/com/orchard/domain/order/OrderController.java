@@ -30,18 +30,30 @@ public class OrderController {
     public String history(Model model) {
         UserEmail email = UserEmail.from(SecurityContextHolder.getContext().getAuthentication().getName());
         model.addAttribute("orders", orderService.findOrder(email));
-        return "/order/history";
+        return "order/history";
     }
 
-    @GetMapping("/history/admin")
-    public String admin(Model model) {
-        model.addAttribute("orders", orderService.findOrder());
-        return "/order/history-admin";
+    @GetMapping("/history/manage")
+    public String adminOrder(Model model) {
+        model.addAttribute("orders", orderService.findAdminOrder());
+        return "order/historyadmin";
+    }
+
+    @GetMapping("/history/manage/trans")
+    public String adminTrans(Model model) {
+        model.addAttribute("orders", orderService.findAdminTrans());
+        return "order/historyadmin";
+    }
+
+    @GetMapping("/history/manage/cancel")
+    public String adminCancel(Model model) {
+        model.addAttribute("orders", orderService.findAdminCancel());
+        return "order/historyadmin";
     }
 
     @PostMapping("/history/anon")
     public String anon(@RequestBody OrderSearchRequestDto orderSearchRequestDto, Model model) {
         model.addAttribute("orders", orderService.findAnonOrder(orderSearchRequestDto));
-        return "/order/history";
+        return "order/history";
     }
 }

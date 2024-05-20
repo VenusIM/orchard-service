@@ -63,11 +63,11 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManagerBuilder.build())
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                                .requestMatchers(HttpMethod.GET, "/member/update")
+                                .requestMatchers(HttpMethod.GET, "/member/info","/member/update", "/order/history", "/order/history/manage/**")
                                 .authenticated()
-                                .requestMatchers(HttpMethod.PATCH, "/api/v1/member/update/**", "/api/v1/order/trans")
+                                .requestMatchers(HttpMethod.PATCH, "/api/v1/member/update/**", "/api/v1/order/trans", "/api/v1/order/trans/complete")
                                 .authenticated()
-                                .requestMatchers(HttpMethod.GET, "/order/history", "/order/history/admin")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/auth/logout")
                                 .authenticated()
                                 .anyRequest()
                                 .permitAll()

@@ -30,7 +30,12 @@ public class MemberController {
         log.info(joinRequestDTO.toString());
         JoinResponseDTO joinResponseDTO = memberManagementService.create(joinRequestDTO.toEntity());
         model.addAttribute("user", joinResponseDTO);
-        return "/member/register-complete";
+        return "member/registercomplete";
+    }
+
+    @GetMapping("/find")
+    public String find() {
+        return "member/find";
     }
 
     @GetMapping("/find/{id}")
@@ -40,13 +45,13 @@ public class MemberController {
 
     @GetMapping("/update")
     public String update() {
-        return "/member/profile-update";
+        return "member/profileupdate";
     }
 
     @GetMapping("/info")
     public String info(Model model) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         model.addAttribute("user", memberManagementService.findOne(UserEmail.from(email)));
-        return "/member/info";
+        return "member/info";
     }
 }

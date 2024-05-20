@@ -12,5 +12,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<List<Order>> deleteAllByOrderNo(String orderNo);
     Optional<List<Order>> findAllByMemberIdxOrderByOrderNoAsc(Long idx);
     Optional<List<Order>> findAllByOrderNoAndTransNoAndTransCompanyAndDeletedTimeIsNull(String orderNo, String transNo, String transCompany);
+    Optional<List<Order>> findAllByStatusInAndDeletedTimeIsNull(List<String> status);
+    Optional<List<Order>> findAllByStatusAndDeletedTimeIsNotNull(String status);
+
 
 }

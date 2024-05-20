@@ -5,6 +5,7 @@ import com.orchard.domain.auth.domain.persist.MessageRepository;
 import com.orchard.domain.member.domain.persist.Member;
 import com.orchard.domain.member.domain.persist.MemberRepository;
 import com.orchard.domain.member.domain.vo.UserEmail;
+import com.orchard.domain.member.domain.vo.UserPhoneNumber;
 import com.orchard.domain.ncp.core.NcpApiOption;
 import com.orchard.domain.ncp.core.SmsResponse;
 import com.orchard.domain.ncp.core.WebClientNcpSender;
@@ -81,24 +82,8 @@ public class OrderService {
         }
         if(orders.size() > 0) {
             Order order = orders.get(0);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", "SMS");
-            jsonObject.put("from", from);
-            jsonObject.put("content",
-                    "[킹체리] " + order.getUserName().userName() + "님 상품 배송 요청 되셨습니다.\n\n["+order.getTransCompany()+"]\n운송장 번호 : " + order.getTransNo()
-            );
-            Map<String, String> messages = new HashMap<>();
-            messages.put("to", order.getUserPhoneNumber().userPhoneNumber().replaceAll("-", ""));
-            jsonObject.put("messages", List.of(messages));
-
-            NcpApiOption ncpApiOption = NcpApiOption.builder()
-                    .method(HttpMethod.POST)
-                    .path("/sms/v2/services/" + serviceId + "/messages")
-                    .request(jsonObject)
-                    .build();
-
-            webClientNcpSender.sendWithBlock(ncpApiOption, new ParameterizedTypeReference<SmsResponse>() {
-            }).getBody();
+            String message = "[킹체리] " + order.getUserName().userName() + "님 상품 배송 요청 되셨습니다.\n\n["+order.getTransCompany()+"]\n운송장 번호 : " + order.getTransNo();
+            sendMessage(message, order.getUserPhoneNumber());
         }
         return orders;
     }
@@ -114,24 +99,8 @@ public class OrderService {
         }
         if(orders.size() > 0) {
             Order order = orders.get(0);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", "SMS");
-            jsonObject.put("from", from);
-            jsonObject.put("content",
-                    "[킹체리] " + order.getUserName().userName() + "님 상품 배송 완료 처리 되셨습니다."
-            );
-            Map<String, String> messages = new HashMap<>();
-            messages.put("to", order.getUserPhoneNumber().userPhoneNumber().replaceAll("-", ""));
-            jsonObject.put("messages", List.of(messages));
-
-            NcpApiOption ncpApiOption = NcpApiOption.builder()
-                    .method(HttpMethod.POST)
-                    .path("/sms/v2/services/" + serviceId + "/messages")
-                    .request(jsonObject)
-                    .build();
-
-            webClientNcpSender.sendWithBlock(ncpApiOption, new ParameterizedTypeReference<SmsResponse>() {
-            }).getBody();
+            String message = "[킹체리] " + order.getUserName().userName() + "님 상품 배송 완료 처리 되셨습니다.";
+            sendMessage(message, order.getUserPhoneNumber());
         }
         return orders;
     }
@@ -207,24 +176,8 @@ public class OrderService {
         OrderResponseDto orderResponseDto = null;
         OrderCompleteDto orderCompleteDto;
         if (orderResponseDtos.size() > 0 && (orderResponseDto = orderResponseDtos.get(0)).getMemberIdx() == null) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", "SMS");
-            jsonObject.put("from", from);
-            jsonObject.put("content",
-                    "[킹체리] " + orderResponseDto.getUserName().userName() + "님 결제 완료 되셨습니다.\n주문 번호 : " + orderId
-            );
-            Map<String, String> messages = new HashMap<>();
-            messages.put("to", orderResponseDto.getUserPhoneNumber().userPhoneNumber().replaceAll("-", ""));
-            jsonObject.put("messages", List.of(messages));
-
-            NcpApiOption ncpApiOption = NcpApiOption.builder()
-                    .method(HttpMethod.POST)
-                    .path("/sms/v2/services/" + serviceId + "/messages")
-                    .request(jsonObject)
-                    .build();
-
-            webClientNcpSender.sendWithBlock(ncpApiOption, new ParameterizedTypeReference<SmsResponse>() {
-            }).getBody();
+            String message =  "[킹체리] " + orderResponseDto.getUserName().userName() + "님 결제 완료 되셨습니다.\n주문 번호 : " + orderId;
+            sendMessage(message, orderResponseDto.getUserPhoneNumber());
         }
         messageRepository.deleteByPhoneNumber(orderResponseDto.getUserPhoneNumber());
         orderCompleteDto = OrderCompleteDto.builder()
@@ -259,24 +212,8 @@ public class OrderService {
         OrderResponseDto orderResponseDto = null;
         OrderCompleteDto orderCompleteDto;
         if (orderResponseDtos.size() > 0 && (orderResponseDto = orderResponseDtos.get(0)).getMemberIdx() == null) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", "SMS");
-            jsonObject.put("from", from);
-            jsonObject.put("content",
-                   "[킹체리] " + orderResponseDto.getUserName().userName() + "님 결체 취소 되셨습니다.\n주문 번호 : " + orderId
-            );
-            Map<String, String> messages = new HashMap<>();
-            messages.put("to", orderResponseDto.getUserPhoneNumber().userPhoneNumber().replaceAll("-", ""));
-            jsonObject.put("messages", List.of(messages));
-
-            NcpApiOption ncpApiOption = NcpApiOption.builder()
-                    .method(HttpMethod.POST)
-                    .path("/sms/v2/services/" + serviceId + "/messages")
-                    .request(jsonObject)
-                    .build();
-
-            webClientNcpSender.sendWithBlock(ncpApiOption, new ParameterizedTypeReference<SmsResponse>() {
-            }).getBody();
+            String message = "[킹체리] " + orderResponseDto.getUserName().userName() + "님 결체 취소 되셨습니다.\n주문 번호 : " + orderId;
+            sendMessage(message,  orderResponseDto.getUserPhoneNumber());
         }
 
         orderCompleteDto = OrderCompleteDto.builder()
@@ -290,24 +227,34 @@ public class OrderService {
         return orderCompleteDto;
     }
 
-    public List<List<Order>> findOrder() {
-        List<Order> orders = orderRepository.findAll();
-        Map<String, List<Order>> orderMap = new HashMap<>();
-        for (Order order : orders) {
-            List<Order> temp = orderMap.get(order.getOrderNo());
-            if (temp == null) {
-                temp = new ArrayList<>(2);
-            }
-            temp.add(order);
-            orderMap.put(order.getOrderNo(), temp);
-        }
-        return orderMap.values().stream().toList();
+    public List<List<Order>> findAdminOrder() {
+        List<Order> orders = orderRepository.findAllByStatusInAndDeletedTimeIsNull(List.of("paid")).get();
+        return makeTreeOrder(orders);
+    }
+
+    public List<List<Order>> findAdminTrans() {
+        List<Order> orders = orderRepository.findAllByStatusInAndDeletedTimeIsNull(List.of("trans", "complete")).get();
+        return makeTreeOrder(orders);
+    }
+
+    public List<List<Order>> findAdminCancel() {
+        List<Order> orders = orderRepository.findAllByStatusAndDeletedTimeIsNotNull("cancelled").get();
+        return makeTreeOrder(orders);
     }
 
 
     public List<List<Order>> findOrder(UserEmail email) {
         Long idx = memberRepository.findByEmail(email).get().getId();
         List<Order> orders = orderRepository.findAllByMemberIdxOrderByOrderNoAsc(idx).get();
+        return makeTreeOrder(orders);
+    }
+
+    public List<List<Order>> findAnonOrder(OrderSearchRequestDto orderSearchRequestDto) {
+        List<Order> orders = orderRepository.findAllByUserPhoneNumberAndOrderNoAndDeletedTimeIsNull(orderSearchRequestDto.getPhoneNumber(), orderSearchRequestDto.getOrderId()).get();
+        return makeTreeOrder(orders);
+    }
+
+    private List<List<Order>> makeTreeOrder(List<Order> orders) {
         Map<String, List<Order>> orderMap = new HashMap<>();
         for (Order order : orders) {
             List<Order> temp = orderMap.get(order.getOrderNo());
@@ -320,17 +267,23 @@ public class OrderService {
         return orderMap.values().stream().toList();
     }
 
-    public List<List<Order>> findAnonOrder(OrderSearchRequestDto orderSearchRequestDto) {
-        List<Order> orders = orderRepository.findAllByUserPhoneNumberAndOrderNoAndDeletedTimeIsNull(orderSearchRequestDto.getPhoneNumber(), orderSearchRequestDto.getOrderId()).get();
-        Map<String, List<Order>> orderMap = new HashMap<>();
-        for (Order order : orders) {
-            List<Order> temp = orderMap.get(order.getOrderNo());
-            if (temp == null) {
-                temp = new ArrayList<>(2);
-            }
-            temp.add(order);
-            orderMap.put(order.getOrderNo(), temp);
-        }
-        return orderMap.values().stream().toList();
+    public void sendMessage(String message, UserPhoneNumber phoneNumber) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type", "SMS");
+        map.put("from", from);
+        map.put("content",message);
+        Map<String, String> messages = new HashMap<>();
+        messages.put("to", phoneNumber.userPhoneNumber().replaceAll("-", ""));
+        map.put("messages", List.of(messages));
+
+        JSONObject jsonObject = new JSONObject(map);
+        NcpApiOption ncpApiOption = NcpApiOption.builder()
+                .method(HttpMethod.POST)
+                .path("/sms/v2/services/" + serviceId + "/messages")
+                .request(jsonObject)
+                .build();
+
+        webClientNcpSender.sendWithBlock(ncpApiOption, new ParameterizedTypeReference<SmsResponse>() {
+        }).getBody();
     }
 }

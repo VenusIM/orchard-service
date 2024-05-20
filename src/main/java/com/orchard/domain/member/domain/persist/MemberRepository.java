@@ -1,5 +1,6 @@
 package com.orchard.domain.member.domain.persist;
 
+import com.orchard.domain.member.domain.vo.UserPhoneNumber;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     void deleteByEmail(final UserEmail email);
     Page<Member> findAll(final Pageable pageable);
     List<Member> findByName(final UserName name, final Pageable pageable);
+
+    Optional<List<Member>> findAllByPhoneNumber(final UserPhoneNumber phoneNumber);
+
 }

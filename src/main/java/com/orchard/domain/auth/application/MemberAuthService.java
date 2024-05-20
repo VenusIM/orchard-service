@@ -5,6 +5,8 @@ import com.orchard.domain.auth.domain.persist.MessageRepository;
 import com.orchard.domain.auth.domain.persist.RefreshTokenEntity;
 import com.orchard.domain.auth.domain.persist.RefreshTokenRepository;
 import com.orchard.domain.auth.dto.SmsRequestDto;
+import com.orchard.domain.member.domain.persist.Member;
+import com.orchard.domain.member.domain.persist.MemberRepository;
 import com.orchard.global.common.*;
 import com.orchard.global.jwt.error.TokenNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class MemberAuthService {
     private final AuthenticationManagerBuilder managerBuilder;
     private final RefreshTokenRepository tokenRepository;
     private final MessageRepository messageRepository;
+    private final MemberRepository memberRepository;
 
     // 로그인
     public TokenDTO authorize(final UserEmail userEmail, final UserPassword userPassword) {
@@ -41,6 +44,9 @@ public class MemberAuthService {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(email, password);
+
+        Optional<Member> member = memberRepository.findByEmail(UserEmail.from(email));
+        member.ifPresent(value -> messageRepository.deleteByPhoneNumber(value.getPhoneNumber()));
 
         Authentication authentication = managerBuilder.getObject()
                 .authenticate(authenticationToken);

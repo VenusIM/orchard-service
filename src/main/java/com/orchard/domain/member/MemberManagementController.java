@@ -1,6 +1,7 @@
 package com.orchard.domain.member;
 
 
+import com.orchard.global.common.ResultResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -83,11 +84,28 @@ public class MemberManagementController {
         return ResponseEntity.ok("이름이 수정 되었습니다.");
     }
 
+    @PatchMapping("/update/pw")
+    public ResponseEntity<ResultResponseDto> updatePassword(@RequestBody PwUpdateRequestDto pwUpdateRequestDto) {
+
+        return ResponseEntity.ok(memberManagementService.updatePassword(pwUpdateRequestDto));
+    }
+
     @PatchMapping("/update/address")
     public ResponseEntity<String> updateAddress(@RequestBody JoinRequestDTO joinRequestDTO) {
         memberManagementService.updateAddress(joinRequestDTO);
         return ResponseEntity.ok("주소가 수정 되었습니다.");
     }
+
+    @PostMapping("/findId")
+    public ResponseEntity<ResultResponseDto> findId(@RequestBody JoinRequestDTO joinRequestDTO) {
+        return ResponseEntity.ok(memberManagementService.checkId(joinRequestDTO));
+    }
+
+    @PostMapping("/findPw")
+    public ResponseEntity<ResultResponseDto> findPw(@RequestBody JoinRequestDTO joinRequestDTO) {
+        return ResponseEntity.ok(memberManagementService.checkPw(joinRequestDTO));
+    }
+
 
     private String getEmail() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

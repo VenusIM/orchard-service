@@ -118,9 +118,9 @@ public class PaymentController {
         if (resultCode.equalsIgnoreCase("0000")) {
             // 결제 성공 비즈니스 로직 구현
             model.addAttribute("orders", orderService.update(responseNode));
-            return "/payment/complete";
+            return "payment/complete";
         }
-        return "/payment/fail";
+        return "payment/fail";
     }
 
     @GetMapping("/cancelAuth/{orderId}")
@@ -128,7 +128,7 @@ public class PaymentController {
 
         List<Order> orders = orderService.findOrder(orderId);
         if(orders.size() < 1) {
-            return "/order/cancel-fail";
+            return "order/cancel-fail";
         }
         int amount = 0;
         String tid = null;
@@ -151,7 +151,7 @@ public class PaymentController {
         }
 
         if(tid == null) {
-            return "/order/cancel-fail";
+            return "order/cancel-fail";
         }
 
         String accessToken = getAccessToken();
@@ -176,10 +176,10 @@ public class PaymentController {
         if (resultCode.equalsIgnoreCase("0000")) {
             // 결제 성공 비즈니스 로직 구현
             model.addAttribute("orders", orderService.delete(responseNode));
-            return "/order/cancel";
+            return "order/cancel";
         }
 
-        return "/order/cancel-fail";
+        return "order/cancel-fail";
     }
 
     @RequestMapping("/hook")
