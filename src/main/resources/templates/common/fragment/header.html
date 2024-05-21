@@ -275,6 +275,13 @@
 </ul>
 
 <script th:inline="javascript">
+  function closeMobile() {
+    if($('#root').hasClass('mobile-nav-active')) {
+      $('.mobile-nav-show').removeClass('d-none')
+      $('.mobile-nav-hide').addClass('d-none')
+      $('#root').removeClass('mobile-nav-active')
+    }
+  }
 
   function preventRightClick(event) {
     event.preventDefault();
@@ -447,6 +454,7 @@
       url:"/member/info",
       headers:{'Authorization': "Bearer "+accessToken}
     }).done((data) => {
+      closeMobile();
       $('#content-body').html(data)
     }).fail(() => {
       window.location.href = '/'
@@ -459,6 +467,7 @@
       url:"/member/update",
       headers:{'Authorization': "Bearer "+accessToken}
     }).done((data) => {
+      closeMobile();
       $('#content-body').html(data)
     }).fail(() => {
         window.location.href = '/'
@@ -471,6 +480,7 @@
       url: "/order/history",
       headers: {'Authorization': "Bearer " + accessToken}
     }).done((data) => {
+      closeMobile();
       $('#content-body').html(data)
     }).fail(() => {
       window.location.href = '/'
@@ -580,6 +590,7 @@
             this.reset();
           })
           $('#loginModal').modal('hide');
+          closeMobile();
           $('#content-body').html(data);
         })
       }
@@ -592,6 +603,7 @@
       url: "/order/history/manage",
       headers: {'Authorization': "Bearer " + accessToken}
     }).done((data) => {
+      closeMobile();
       $('#content-body').html(data)
     }).fail(() => {
       window.location.href = '/'
@@ -604,6 +616,7 @@
       url: "/order/history/manage/trans",
       headers: {'Authorization': "Bearer " + accessToken}
     }).done((data) => {
+      closeMobile();
       $('#content-body').html(data)
     }).fail(() => {
       window.location.href = '/'
@@ -616,6 +629,7 @@
       url: "/order/history/manage/cancel",
       headers: {'Authorization': "Bearer " + accessToken}
     }).done((data) => {
+      closeMobile();
       $('#content-body').html(data)
     }).fail(() => {
       window.location.href = '/'

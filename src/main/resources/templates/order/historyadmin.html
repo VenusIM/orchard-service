@@ -195,6 +195,8 @@
         url: "/order/history/manage/trans",
         headers: {'Authorization': "Bearer " + accessToken}
       }).done((data) => {
+      closeMobile();
+
         $('#content-body').html(data)
       }).fail(() => {
         window.location.href = '/'
@@ -223,6 +225,7 @@
           url: "/order/history/manage/trans",
           headers: {'Authorization': "Bearer " + accessToken}
         }).done((data) => {
+          closeMobile();
           $('#content-body').html(data)
         }).fail(() => {
           window.location.href = '/'
