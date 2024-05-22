@@ -89,7 +89,7 @@ public class OrderService {
     }
 
     public List<Order> transComplete(TransRequestDto transRequestDto) {
-        List<Order> orders = orderRepository.findAllByOrderNoAndTransNoAndTransCompanyAndDeletedTimeIsNull(transRequestDto.getOrderNo(), transRequestDto.getTransNo(), transRequestDto.getTransCompany()).get();
+        List<Order> orders = orderRepository.findAllByOrderNoAndTransNoAndTransCompanyAndDeletedTimeIsNullOrderByIdAsc(transRequestDto.getOrderNo(), transRequestDto.getTransNo(), transRequestDto.getTransCompany()).get();
         for(Order order : orders) {
             if(!order.getStatus().equals("trans")) {
                 continue;
@@ -228,24 +228,24 @@ public class OrderService {
     }
 
     public List<List<Order>> findAdminOrder() {
-        List<Order> orders = orderRepository.findAllByStatusInAndDeletedTimeIsNull(List.of("paid")).get();
+        List<Order> orders = orderRepository.findAllByStatusInAndDeletedTimeIsNullOrderByIdAsc(List.of("paid")).get();
         return makeTreeOrder(orders);
     }
 
     public List<List<Order>> findAdminTrans() {
-        List<Order> orders = orderRepository.findAllByStatusInAndDeletedTimeIsNull(List.of("trans", "complete")).get();
+        List<Order> orders = orderRepository.findAllByStatusInAndDeletedTimeIsNullOrderByIdAsc(List.of("trans", "complete")).get();
         return makeTreeOrder(orders);
     }
 
     public List<List<Order>> findAdminCancel() {
-        List<Order> orders = orderRepository.findAllByStatusAndDeletedTimeIsNotNull("cancelled").get();
+        List<Order> orders = orderRepository.findAllByStatusAndDeletedTimeIsNotNullOrderByIdAsc("cancelled").get();
         return makeTreeOrder(orders);
     }
 
 
     public List<List<Order>> findOrder(UserEmail email) {
         Long idx = memberRepository.findByEmail(email).get().getId();
-        List<Order> orders = orderRepository.findAllByMemberIdxOrderByOrderNoAsc(idx).get();
+        List<Order> orders = orderRepository.findAllByMemberIdxOrderByIdAsc(idx).get();
         return makeTreeOrder(orders);
     }
 
@@ -255,7 +255,7 @@ public class OrderService {
     }
 
     private List<List<Order>> makeTreeOrder(List<Order> orders) {
-        Map<String, List<Order>> orderMap = new HashMap<>();
+        Map<String, List<Order>> orderMap = new LinkedHashMap<>();
         for (Order order : orders) {
             List<Order> temp = orderMap.get(order.getOrderNo());
             if (temp == null) {

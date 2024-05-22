@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<section class="h-100 gradient-custom" style="margin: 100px;">
-  <div class="container py-5 h-100">
+<section class="h-100 gradient-custom" style="margin: 100px 0;">
+  <div class="container-fluid py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-lg-10 col-xl-8">
         <div class="card" style="border-radius: 10px;">
@@ -16,16 +16,17 @@
               <div class="card shadow-0 border mb-4">
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-8">
+                    <div class="col-md-7 col-12">
                       <p class="text-muted mb-0" th:text="${'주문 번호 : ' + orderList[0].getOrderNo()}"></p>
                     </div>
-                    <div id="trans" class="col-2" th:if="${orderList[0].getStatus() == 'paid'}">
+                    <div class="col-md-1 col-4"></div>
+                    <div id="trans" class="col-md-2 col-4" th:if="${orderList[0].getStatus() == 'paid'}">
                       <button class="btn btn-sm btn-info trans-btn" th:data-id="${orderList[0].getOrderNo()}">운송장 등록</button>
                     </div>
-                    <div id="complete" class="col-2" th:if="${orderList[0].getStatus() == 'trans'}">
+                    <div id="complete" class="col-md-2 col-4" th:if="${orderList[0].getStatus() == 'trans'}">
                       <button class="btn btn-sm btn-info complete-btn" th:data-company="${orderList[0].getTransCompany()}" th:data-order-id="${orderList[0].getOrderNo()}" th:data-trans-id="${orderList[0].getTransNo()}">배송 완료</button>
                     </div>
-                    <div class="col-2" th:if="${orderList[0].getStatus() == 'paid'}">
+                    <div class="col-md-2 col-4" th:if="${orderList[0].getStatus() == 'paid'}">
                       <button class="btn btn-sm btn-info cancel-btn" th:data-id="${orderList[0].getOrderNo()}">결제취소</button>
                     </div>
                   </div>
