@@ -54,6 +54,18 @@
                                th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * 56000, 3, 'COMMA') + '원'}"></p>
                           </div>
                         </th:block>
+                        <th:block th:if="${order.getProductIdx() == 3}">
+                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0">소과 1kg (5-7g)</p>
+                          </div>
+                          <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small" th:text="${'개수: ' + order.getCount()}"></p>
+                          </div>
+                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small"
+                               th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * 20000, 3, 'COMMA') + '원'}"></p>
+                          </div>
+                        </th:block>
                       </div>
                     </div>
                   </div>

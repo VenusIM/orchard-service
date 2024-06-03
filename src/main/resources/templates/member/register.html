@@ -567,8 +567,6 @@
                         if(extraAddr !== ''){
                             extraAddr = ' (' + extraAddr + ')';
                         }
-
-                        // console.log(extraAddr);
                         // 조합된 참고항목을 해당 필드에 넣는다.
                         // document.getElementById("sample3_extraAddress").value = extraAddr;
 
@@ -621,7 +619,6 @@
                         if( number.substring( 0, 2 ).indexOf( "02" ) === 0 ) {
                             seoul = 1;
                             phone.setAttribute("maxlength", "12");
-                            console.log( phone );
                         } else {
                             phone.setAttribute("maxlength", "13");
                         }

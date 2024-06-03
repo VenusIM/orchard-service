@@ -420,11 +420,15 @@
   const pojoPrice2 = [[${products.get(1).getPrice()}]];
   const sale2 = [[${products.get(1).getSale()}]]
   const price2 = pojoPrice2 / 100 * (100 - sale2);
+  const pojoPrice3 = [[${products.get(2).getPrice()}]];
+  const sale3 = [[${products.get(2).getSale()}]]
+  const price3 = pojoPrice3 / 100 * (100 - sale3);
 
   init()
   function init() {
     const product1 = window.localStorage.getItem("orchard-product1");
     const product2 = window.localStorage.getItem("orchard-product2");
+    const product3 = window.localStorage.getItem("orchard-product3");
 
     let pojoTotal = 0;
     let saleTotal = 0;
@@ -456,7 +460,21 @@
       $('#prod2').remove();
     }
 
-    if(isEmpty(product1) && isEmpty(product2)) {
+    if(!isEmpty(product3) && parseInt(product3) > 0) {
+      $('#prod3').attr('hidden', false)
+      $('#product-count3').text(product3)
+      let price = parseInt(product3) * price3;
+      $('#price3').text(price.toString()
+              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원")
+      if($('#check3').is(':checked')) {
+        pojoTotal += + pojoPrice3 * parseInt(product3);
+        saleTotal += pojoPrice3 / 100 * sale3 * parseInt(product3)
+      }
+    } else {
+      $('#prod3').remove();
+    }
+
+    if(isEmpty(product1) && isEmpty(product2) && isEmpty(product3)) {
       $('#no-prod').attr('hidden', false);
       $('#pojo-price').text("0원");
       $('#sale-price').text("0원");
@@ -543,11 +561,44 @@
     total();
   })
 
+  $('#plus3').on('click', () => {
+    const $count = $('#product-count3')
+    const product3 = window.localStorage.getItem('orchard-product3')
+    const count = parseInt(product3);
+    $count.text(count + 1);
+
+    let price = price3 * (count+1);
+    const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원";
+    $('#price3').text(cn1)
+    window.localStorage.setItem('orchard-product3', count + 1);
+    total();
+  })
+
+  $('#minus3').on('click', () => {
+    const $count = $('#product-count3')
+    const product3 = window.localStorage.getItem('orchard-product3')
+    const count = parseInt(product3)
+    if(count === 1) {
+      return;
+    }
+    $count.text(count - 1);
+
+    let price = price3 * (count-1);
+    const cn1 = price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") + "원";
+    $('#price3').text(cn1)
+    window.localStorage.setItem('orchard-product3', count - 1);
+    total();
+  })
+
   $('#delete1').on('click', () => {
     $('#prod1').remove();
     window.localStorage.removeItem('orchard-product1');
     const product2 = window.localStorage.getItem("orchard-product2");
-    if(isEmpty(product2)) {
+    const product3 = window.localStorage.getItem("orchard-product3");
+
+    if(isEmpty(product2) && isEmpty(product3)) {
       $('#no-prod').attr('hidden', false);
     }
     total();
@@ -557,7 +608,20 @@
     $('#prod2').remove();
     window.localStorage.removeItem('orchard-product2');
     const product1 = window.localStorage.getItem("orchard-product1");
-    if(isEmpty(product1)) {
+    const product3 = window.localStorage.getItem("orchard-product3");
+    if(isEmpty(product1) && isEmpty(product3)) {
+      $('#no-prod').attr('hidden', false);
+    }
+    total();
+  })
+
+  $('#delete3').on('click', () => {
+    $('#prod3').remove();
+    window.localStorage.removeItem('orchard-product3');
+    const product1 = window.localStorage.getItem("orchard-product1");
+    const product2 = window.localStorage.getItem("orchard-product2");
+
+    if(isEmpty(product1) && isEmpty(product2)) {
       $('#no-prod').attr('hidden', false);
     }
     total();
@@ -571,14 +635,22 @@
     total();
   })
 
+  $('#check3').on('change', () => {
+    total();
+  })
+
   function total() {
     let product1 = "0";
     let product2 = "0";
+    let product3 = "0";
     if($('#check1').is(':checked')) {
       product1 = window.localStorage.getItem("orchard-product1");
     }
     if($('#check2').is(':checked')) {
       product2 = window.localStorage.getItem("orchard-product2");
+    }
+    if($('#check3').is(':checked')) {
+      product3 = window.localStorage.getItem("orchard-product3");
     }
     let pojoTotal = 0;
     let saleTotal = 0;
@@ -588,10 +660,16 @@
     }
 
     if(!isEmpty(product2) && parseInt(product2) > 0) {
-      pojoTotal += + pojoPrice2 * parseInt(product2);
+      pojoTotal += pojoPrice2 * parseInt(product2);
       saleTotal += pojoPrice2 / 100 * sale2 * parseInt(product2)
     }
-    if(isEmpty(product1) && isEmpty(product2)) {
+
+    if(!isEmpty(product3) && parseInt(product3) > 0) {
+      pojoTotal += pojoPrice3 * parseInt(product3);
+      saleTotal += pojoPrice3 / 100 * sale3 * parseInt(product3)
+    }
+
+    if(isEmpty(product1) && isEmpty(product2) && isEmpty(product3)) {
       $('#pojo-price').text("0원");
       $('#sale-price').text("0원");
       $('#total-price').text("0원");
@@ -616,7 +694,7 @@
   function order(name, phone, address) {
     let count = "";
     let productId = "";
-    if((isEmpty($('#check1')) && isEmpty($('#check2')))  || (!$('#check1').is(':checked') && !$('#check2').is(':checked'))) {
+    if((isEmpty($('#check1')) && isEmpty($('#check2')) && isEmpty($('#check3')))  || (!$('#check1').is(':checked') && !$('#check2').is(':checked') && !$('#check3').is(':checked'))) {
       alert('선택한 상품이 없습니다.')
       return;
     }
@@ -637,6 +715,18 @@
       }
       productId += [[${products.get(1).getId()}]]
       window.localStorage.removeItem("orchard-product2");
+    }
+
+    if($('#check3').is(':checked')) {
+      if(!isEmpty(count)) {
+        count += ","
+      }
+      count += window.localStorage.getItem("orchard-product3");
+      if(!isEmpty(productId)) {
+        productId += ","
+      }
+      productId += [[${products.get(2).getId()}]]
+      window.localStorage.removeItem("orchard-product3");
     }
     const json = {
       "productId" : productId,
@@ -663,11 +753,18 @@
     }).done((data) => {
 
       let amount=  parseInt(data[0].product.price) / 100 * (100 - parseInt(data[0].product.sale)) * parseInt(data[0].count)
-      let goodsName =`${data[0].product.name}[${data[0].count}개]`
+      let goodsName =`${data[0].product.name} ${data[0].count}개`
 
-      if(data.length == 2) {
+      if(data.length === 2) {
         amount += parseInt(data[1].product.price) / 100 * (100 - parseInt(data[1].product.sale)) * parseInt(data[1].count)
-        goodsName += `, ${data[1].product.name}[${data[1].count}개]`
+        goodsName += `, ${data[1].product.name} ${data[1].count}개`
+      }
+
+      if(data.length === 3) {
+        amount += parseInt(data[1].product.price) / 100 * (100 - parseInt(data[1].product.sale)) * parseInt(data[1].count)
+        goodsName += `, ${data[1].product.name} ${data[1].count}개`
+        amount += parseInt(data[2].product.price) / 100 * (100 - parseInt(data[2].product.sale)) * parseInt(data[2].count)
+        goodsName += `, ${data[2].product.name} ${data[2].count}개`
       }
 
       if(amount < 70000) {
@@ -682,15 +779,12 @@
         goodsName: goodsName,
         returnUrl: data[0].host+'/serverAuth',
         fnError: function (result) {
-
-          if(!isEmpty($('#check1')) && $('#check1').is(':checked')) {
-              window.localStorage.setItem("orchard-product1", data[0].count);
+          for(let i = 0; i < data.length; i++) {
+            const id = data[i].product.id;
+            if(!isEmpty($('#check'+id) && $('#check'+id).is(':checked'))) {
+              window.localStorage.setItem("orchard-product"+id, data[i].count);
+            }
           }
-
-          if(!isEmpty($('#check2')) && $('#check2').is(':checked')) {
-              window.localStorage.setItem("orchard-product2", data[1].count);
-          }
-
           $.ajax({
             url: "/api/v1/order/id",
             method: "delete",
@@ -772,7 +866,6 @@
           if( number.substring( 0, 2 ).indexOf( "02" ) === 0 ) {
             seoul = 1;
             phone.setAttribute("maxlength", "12");
-            console.log( phone );
           } else {
             phone.setAttribute("maxlength", "13");
           }
@@ -919,7 +1012,6 @@
             extraAddr = ' (' + extraAddr + ')';
           }
 
-          // console.log(extraAddr);
           // 조합된 참고항목을 해당 필드에 넣는다.
           // document.getElementById("sample3_extraAddress").value = extraAddr;
 
