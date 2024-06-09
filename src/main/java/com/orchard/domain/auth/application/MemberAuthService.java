@@ -60,7 +60,7 @@ public class MemberAuthService {
             RefreshTokenEntity token = new RefreshTokenEntity(tokenDTO.getRefreshToken(), UserEmail.from(email));
             tokenRepository.save(token);
         } else if(!tokenProvider.validateToken(optionalRefreshToken.get().getRefreshToken().refreshToken())) {
-            tokenRepository.save(new RefreshTokenEntity(tokenDTO.getRefreshToken(), UserEmail.from(email)));
+            tokenRepository.save(optionalRefreshToken.get().updateToken(tokenDTO.getRefreshToken()));
         } else {
             tokenDTO.setOriginRefreshToken(optionalRefreshToken.get().getRefreshToken());
         }

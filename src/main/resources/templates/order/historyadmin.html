@@ -60,7 +60,19 @@
                     </div>
                     <div class="col-10">
                       <div class="row align-items-center" th:each="order : ${orderList}" style="margin-bottom: 10%">
-                        <th:block th:if="${order.getProductIdx() == 1 }">
+                        <th:block th:with="product=${products.get(order.getProductIdx().intValue() - 1)}">
+                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0" th:text="${product.getName()}"></p>
+                          </div>
+                          <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small" th:text="${'개수: ' + order.getCount()}"></p>
+                          </div>
+                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small"
+                               th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * product.getPrice() / 100 * (100 - product.getSale()), 3, 'COMMA') + '원'}"></p>
+                          </div>
+                        </th:block>
+                        <!--<th:block th:if="${order.getProductIdx() == 1 }">
                           <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
                             <p class="text-muted mb-0">국내산 킹체리 1kg</p>
                           </div>
@@ -95,7 +107,7 @@
                             <p class="text-muted mb-0 small"
                                th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * 20000, 3, 'COMMA') + '원'}"></p>
                           </div>
-                        </th:block>
+                        </th:block>-->
                       </div>
                     </div>
                   </div>
