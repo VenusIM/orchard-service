@@ -26,6 +26,9 @@ public class ProductController {
 
     @GetMapping("/detail/{number}")
     public String detail(Model model, @PathVariable String number) {
+        if(!"3".equals(number)) {
+            return "product/product";
+        }
         model.addAttribute("product", productService.findById(Long.parseLong(number)));
         return "product/detail";
     }
