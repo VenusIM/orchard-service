@@ -21,16 +21,14 @@ public class ProductController {
     }
     @GetMapping("/list")
     public String productList(Model model) {
+        model.addAttribute("products", productService.findAll());
         return "product/product";
     }
 
     @GetMapping("/detail/{number}")
     public String detail(Model model, @PathVariable String number) {
-        if(!"3".equals(number)) {
-            return "product/product";
-        }
-        model.addAttribute("product", productService.findById(Long.parseLong(number)));
-        return "product/detail";
+       model.addAttribute("product", productService.findById(Long.parseLong(number)));
+       return "product/detail";
     }
 
     @GetMapping("cart")

@@ -42,109 +42,32 @@
                     <section id="stats-counter" class="stats-counter justify-content-center">
                         <div class="container" data-aos="fade-up">
                             <div class="row gy-4 justify-content-center align-items-center">
+                                <th:block th:each="product : ${products}">
                                     <div class="col-lg-4 col-12">
-                                        <!--<div class="card ribbon-box">
-                                            <div class="ribbon"><div><span class="percent-sale">20%</span> Sale</div></div>
-                                            &lt;!&ndash; Product image&ndash;&gt;
-                                            <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry14.jpeg}"/>
-                                            &lt;!&ndash; Product details&ndash;&gt;
-                                            <div class="card-body p-4">
-                                                <div class="text-center">
-                                                    &lt;!&ndash; Product name&ndash;&gt;
-                                                    <h5 class="fw-bolder product-title">킹체리 1kg</h5>
-                                                    &lt;!&ndash; Product price&ndash;&gt;
-                                                    <span class="text-muted text-decoration-line-through">35,000원</span>
-                                                    <strong class="price">28,000원</strong>
-                                                </div>
-                                            </div>
-                                            &lt;!&ndash; Product actions&ndash;&gt;
-                                            <div id="cherry1" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">상세보기</a></div>
-                                            </div>
-                                        </div>-->
-                                    </div>
-                                    <div class="col-lg-4 col-12">
-                                        <!--<div class="card">
-                                            &lt;!&ndash; Sale badge&ndash;&gt;
-                                            <div class="ribbon"><div><span class="percent-sale">20%</span> Sale</div></div>
-                                            &lt;!&ndash; Product image&ndash;&gt;
-                                            <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry14.jpeg}" alt="..." />
-                                            &lt;!&ndash; Product details&ndash;&gt;
-                                            <div class="card-body p-4">
-                                                <div class="text-center">
-                                                    &lt;!&ndash; Product name&ndash;&gt;
-                                                    <h5 class="fw-bolder product-title">킹체리 2kg</h5>
-                                                    &lt;!&ndash; Product reviews&ndash;&gt;
-                                                    &lt;!&ndash;<div class="d-flex justify-content-center small text-warning mb-2">
-                                                        <div class="bi-star-fill"></div>
-                                                        <div class="bi-star-fill"></div>
-                                                        <div class="bi-star-fill"></div>
-                                                        <div class="bi-star-fill"></div>
-                                                        <div class="bi-star-fill"></div>
-                                                    </div>&ndash;&gt;
-                                                    &lt;!&ndash; Product price&ndash;&gt;
-                                                    <span class="text-muted text-decoration-line-through">70,000원</span>
-                                                    <strong class="price">56,000원</strong>
-                                                </div>
-                                            </div>
-                                            &lt;!&ndash; Product actions&ndash;&gt;
-                                            <div id="cherry2" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">상세보기</a></div>
-                                            </div>
-                                        </div>-->
                                         <div class="card ribbon-box">
-                                            <div class="ribbon"><div><span class="percent-sale">20%</span> Sale</div></div>
+                                            <div class="ribbon"><div><span class="percent-sale" th:text="${product.getSale() + '%'}"></span> Sale</div></div>
                                             <!-- Product image-->
                                             <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry14.jpeg}"/>
                                             <!-- Product details-->
                                             <div class="card-body p-4">
                                                 <div class="text-center">
                                                     <!-- Product name-->
-                                                    <h5 class="fw-bolder product-title">중과 1kg (5-7g)</h5>
+                                                    <h5 class="fw-bolder product-title" th:text="${product.getName()}"></h5>
                                                     <!-- Product price-->
-                                                    <span class="text-muted text-decoration-line-through">25,000원</span>
-                                                    <strong class="price">20,000원</strong>
+                                                    <span class="text-muted text-decoration-line-through" th:text="${#numbers.formatInteger(product.getPrice(), 3, 'COMMA') + '원'}"></span>
+                                                    <strong class="price" th:text="${#numbers.formatInteger(product.getPrice() / 100 * (100 - product.getSale()), 3, 'COMMA') + '원'}"></strong>
                                                 </div>
                                             </div>
                                             <!-- Product actions-->
-                                            <div id="cherry3" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                            <div class="detail card-footer p-4 pt-0 border-top-0 bg-transparent" th:data="${product.getId()}">
                                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto">상세보기</a></div>
                                             </div>
                                         </div>
                                     </div>
-                                <div class="col-lg-4 col-12"></div>
-                                </div>
-                        </div>
-                    </section>
-                    <!--<section id="stats-counter2" class="stats-counter justify-content-center">
-                        <div class="container" data-aos="fade-up">
-                            <div class="row gy-4 justify-content-center align-items-center">
-                                <div class="col-lg-4 col-12">
-                                    <div class="card ribbon-box">
-                                        <div class="ribbon"><div><span class="percent-sale">20%</span> Sale</div></div>
-                                        &lt;!&ndash; Product image&ndash;&gt;
-                                        <img class="card-img-top product-image" th:src="@{/assets/img/cherry/cherry14.jpeg}"/>
-                                        &lt;!&ndash; Product details&ndash;&gt;
-                                        <div class="card-body p-4">
-                                            <div class="text-center">
-                                                &lt;!&ndash; Product name&ndash;&gt;
-                                                <h5 class="fw-bolder product-title">소과 1kg (5-7g)</h5>
-                                                &lt;!&ndash; Product price&ndash;&gt;
-                                                <span class="text-muted text-decoration-line-through">25,000원</span>
-                                                <strong class="price">20,000원</strong>
-                                            </div>
-                                        </div>
-                                        &lt;!&ndash; Product actions&ndash;&gt;
-                                        <div id="cherry3" class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                            <div class="text-center"><a class="btn btn-outline-dark mt-auto">상세보기</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-1 col-2"></div>
-                                <div class="col-lg-4 col-12"></div>
+                                </th:block>
                             </div>
                         </div>
-                    </section>-->
+                    </section>
                 </div>
             </div>
         </div>
