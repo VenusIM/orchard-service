@@ -10,9 +10,10 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
               <p class="lead fw-normal mb-0" style="color: #a8729a;">결제 내역</p>
             </div>
-            <th:block th:each="orderList : ${orders}"
-                      th:if="${orderList[0].getStatus() == 'paid'
-                      || orderList[0].getStatus() == 'cancelled' || orderList[0].getStatus() == 'trans' || orderList[0].getStatus() == 'complete'}">
+            <th:block th:if="${orders.size() > 0}">
+              <th:block th:each="orderList : ${orders}"
+                      th:if="${(orderList[0].getStatus() == 'paid'
+                      || orderList[0].getStatus() == 'cancelled' || orderList[0].getStatus() == 'trans' || orderList[0].getStatus() == 'complete')}">
               <div class="card shadow-0 border mb-4">
                 <div class="card-body">
                   <div class="row">
@@ -41,42 +42,6 @@
                             <p class="text-muted mb-0 small"
                                th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * product.getPrice() / 100 * (100 - product.getSale()), 3, 'COMMA') + '원'}"></p>
                           </div>
-                        </th:block>
-                        <!--<th:block th:if="${order.getProductIdx() == 1 }">
-                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0">국내산 킹체리 1kg</p>
-                          </div>
-                          <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0 small" th:text="${'개수: ' + order.getCount()}"></p>
-                          </div>
-                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0 small"
-                               th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * 28000, 3, 'COMMA') + '원'}"></p>
-                          </div>
-                        </th:block>
-                        <th:block th:if="${order.getProductIdx() == 2}">
-                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0">국내산 킹체리 2kg</p>
-                          </div>
-                          <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0 small" th:text="${'개수: ' + order.getCount()}"></p>
-                          </div>
-                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0 small"
-                               th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * 56000, 3, 'COMMA') + '원'}"></p>
-                          </div>
-                        </th:block>
-                        <th:block th:if="${order.getProductIdx() == 3}">
-                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0">소과 1kg (5-7g)</p>
-                          </div>
-                          <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0 small" th:text="${'개수: ' + order.getCount()}"></p>
-                          </div>
-                          <div class="col-md-5 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-muted mb-0 small"
-                               th:text="${'가격 : '+ #numbers.formatInteger(order.getCount() * 20000, 3, 'COMMA') + '원'}"></p>
-                          </div>-->
                         </th:block>
                       </div>
                     </div>
@@ -116,7 +81,8 @@
                 </div>
               </div>
             </th:block>
-            </div>
+            </th:block>
+          </div>
         </div>
       </div>
     </div>
